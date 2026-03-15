@@ -1,0 +1,92 @@
+import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import Table from '../components/ui/Table';
+import BasicButtons from '../components/ui/Buttons';
+const data = [
+  { id: '1', name: 'Nota de React', date: '12 Mar', status: 'Hecho' },
+  { id: '2', name: 'Comprar café', date: '14 Mar', status: 'Pendiente' },
+  { id: '3', name: 'Diseñar UI', date: '15 Mar', status: 'En curso' },
+];
+export default function Config() {
+  return (
+    <View style={styles.container}>
+      <View style={styles.containerMain}>
+        <Text style={styles.title}>Datos del sistema</Text>
+
+        <View>
+          <Text style={styles.subTitle}>Info de notas</Text>
+          <Table
+            data={data}
+            header={[
+              {
+                label: 'Nombre',
+                name: 'name',
+              },
+              {
+                label: 'fecha',
+                name: 'date',
+              },
+              {
+                label: 'Estatus',
+                name: 'status',
+              },
+            ]}
+          />
+        </View>
+
+        <View>
+          <Text style={styles.subTitle}>Borrado del sistema</Text>
+          <BasicButtons variant="error">Borrar todos los datos</BasicButtons>
+        </View>
+      </View>
+    </View>
+  );
+}
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  containerMain: {
+    flex: 1,
+    paddingHorizontal: 8,
+  },
+  title: {
+    fontWeight: '600',
+    fontSize: 26,
+    width: '100%',
+    textAlign: 'left',
+    paddingHorizontal: 8,
+    marginBottom: 8,
+  },
+  subTitle: {
+    fontWeight: '500',
+    fontSize: 18,
+    width: '100%',
+    textAlign: 'left',
+    paddingHorizontal: 8,
+    marginBottom: 8,
+  },
+  containerInput: {
+    paddingVertical: 20,
+    backgroundColor: '#f8f9fa',
+  },
+  searchSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f1f3f6', // Color de fondo grisáceo suave del input
+    borderRadius: 50, // Hace que sea totalmente ovalado
+    paddingHorizontal: 15,
+    height: 55, // Altura del input
+  },
+  searchIcon: {
+    fontSize: 18,
+    marginRight: 10,
+    opacity: 0.5, // Para que no se vea tan fuerte el emoji
+  },
+  input: {
+    flex: 1,
+    fontSize: 18,
+    color: '#495057', // Color del texto al escribir
+    height: '100%',
+  },
+});
