@@ -9,16 +9,22 @@ import React, { useContext } from 'react';
 import IconsSvg from '../../iconsSvg';
 import { RouterContext } from '../../../context/routerContext';
 import { colors } from '../../../styles/color';
+import { GeneralContext } from '../../../context/generalContext';
 
 const width = Dimensions.get('window').width;
 export default function MenuFooter() {
   const { routeName, navigate } = useContext(RouterContext);
+  const { setFolderName } = useContext(GeneralContext);
+  const goPath = (name: string) => {
+    setFolderName('');
+    navigate(name);
+  };
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={[styles.iconMenu]}
         onPress={() => {
-          navigate('homeMain');
+          goPath('homeMain');
         }}
       >
         <IconsSvg
@@ -40,7 +46,7 @@ export default function MenuFooter() {
       <TouchableOpacity
         style={[styles.iconMenu]}
         onPress={() => {
-          navigate('folderMain');
+          goPath('folderMain');
         }}
       >
         <IconsSvg
@@ -62,7 +68,7 @@ export default function MenuFooter() {
       <TouchableOpacity
         style={[styles.iconMenu]}
         onPress={() => {
-          navigate('configMain');
+          goPath('configMain');
         }}
       >
         <IconsSvg

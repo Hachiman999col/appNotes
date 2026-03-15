@@ -6,9 +6,9 @@ import {
   useWindowDimensions,
   Pressable,
 } from 'react-native';
-import React, { Fragment, useContext, useState } from 'react';
+import React, { Fragment, useContext, useEffect, useState } from 'react';
 import SearchInput from '../components/Form/SearchInput';
-import { colors } from '../styles/color';
+import { colors, objColor } from '../styles/color';
 
 import BasicButtons from '../components/ui/Buttons';
 import FolderCard from '../components/sections/Cards/FolderCard';
@@ -17,21 +17,14 @@ import IconsSvg from '../components/iconsSvg';
 import BasicInput from '../components/Form/BasicInput';
 import LinearGradient from 'react-native-linear-gradient';
 import { RouterContext } from '../context/routerContext';
-const DATA = [
-  { id: '1', title: 'Nota 1', color: colors.cardRed.light },
-  { id: '2', title: 'Nota 2', color: colors.cardOrange.light },
-  { id: '3', title: 'Nota 3', color: colors.cardYellow.light },
-  { id: '4', title: 'Nota 4', color: colors.cardGreen.light },
-  { id: '5', title: 'Nota 5', color: colors.cardBlue.light },
-  { id: '6', title: 'Nota 6', color: colors.cardPurple.light },
+import { postCreatefolder } from '../core/db/dbPost';
+import { getAllFolders, getNotesCount } from '../core/db/dbGet';
+import { ResponseApiFolder } from '../core/db/types';
+import { GeneralContext } from '../context/generalContext';
 
-  { id: '7', title: 'Nota 7', color: colors.cardRed.light },
-  { id: '8', title: 'Nota 8', color: colors.cardOrange.light },
-  { id: '9', title: 'Nota 9', color: colors.cardYellow.light },
-  { id: '10', title: 'Nota 10', color: colors.cardGreen.light },
-  { id: '11', title: 'Nota 11', color: colors.cardBlue.light },
-  { id: '12', title: 'Nota 12', color: colors.cardPurple.light },
-];
+interface FolderType extends ResponseApiFolder {
+  count: number;
+}
 
 const listIcons: string[] = ['home', 'search', 'folderPlus'];
 const listColors: {
@@ -43,35 +36,63 @@ const listColors: {
   };
 }[] = [
   {
-    name: 'Rojo',
+    name: 'cardRed',
     colors: colors.cardRed,
   },
   {
-    name: 'Naranja',
+    name: 'cardOrange',
     colors: colors.cardOrange,
   },
   {
-    name: 'Amarillo',
+    name: 'cardYellow',
     colors: colors.cardYellow,
   },
   {
-    name: 'Verde',
+    name: 'cardGreen',
     colors: colors.cardGreen,
   },
   {
-    name: 'Azul',
+    name: 'cardBlue',
     colors: colors.cardBlue,
   },
   {
-    name: 'Violeta',
+    name: 'cardPurple',
     colors: colors.cardPurple,
   },
 ];
-function NewFolder({ onCancel }: { onCancel: () => void }) {
+function NewFolder({
+  onCancel,
+  onReset,
+}: {
+  onCancel: () => void;
+  onReset: () => void;
+}) {
   const { width, height } = useWindowDimensions();
   //states
-  const [iconSelect, setIconSelect] = useState<number>(-1);
-  const [colorSelect, setColorSelect] = useState<number>(-1);
+  const [iconSelect, setIconSelect] = useState<string>('');
+  const [colorSelect, setColorSelect] = useState<string>('');
+  const [valueTitle, setValueTitle] = useState<string>('');
+
+  const handleCreateData = async (
+    title: string,
+    icon: string,
+    color: string,
+  ) => {
+    const today = new Date();
+    const id = await postCreatefolder({
+      title,
+      icon,
+      color,
+      dateCreated: today.toISOString(),
+    });
+
+    if (typeof id === 'number') {
+      onReset();
+      onCancel();
+    } else {
+      onCancel();
+    }
+  };
   return (
     <View
       style={[
@@ -96,28 +117,33 @@ function NewFolder({ onCancel }: { onCancel: () => void }) {
         <Text style={styles.titleModalTxt}>Nueva carpeta</Text>
       </View>
       <View style={styles.container}>
-        <BasicInput iconName="folderPlus" placeholder="Nombre de la carpeta" />
+        <BasicInput
+          iconName="folderPlus"
+          placeholder="Nombre de la carpeta"
+          value={valueTitle}
+          onChangeText={setValueTitle}
+        />
 
         <View>
           <Text style={styles.iconTitle}>Seleccione el icono</Text>
           <FlatList
             data={listIcons}
             horizontal
-            renderItem={({ item, index }) => (
+            renderItem={({ item }) => (
               <Pressable
                 style={[
                   styles.iconContainer,
-                  index === iconSelect ? styles.iconActive : styles.iconDefault,
+                  item === iconSelect ? styles.iconActive : styles.iconDefault,
                 ]}
                 onPress={() => {
-                  setIconSelect(index);
+                  setIconSelect(item);
                 }}
               >
                 <IconsSvg
                   name={item}
                   strokeWidth={2}
                   stroke={
-                    index === iconSelect ? colors.white : colors.cardPurple.dark
+                    item === iconSelect ? colors.white : colors.cardPurple.dark
                   }
                 />
               </Pressable>
@@ -141,17 +167,17 @@ function NewFolder({ onCancel }: { onCancel: () => void }) {
             numColumns={2}
             columnWrapperStyle={styles.row}
             contentContainerStyle={styles.listContent}
-            renderItem={({ item, index }) => (
+            renderItem={({ item }) => (
               <Pressable
                 style={[styles.colorContainer, { height: width / 2 - 40 }]}
                 onPress={() => {
-                  setColorSelect(index);
+                  setColorSelect(item.name);
                 }}
               >
                 <LinearGradient
                   style={styles.colorContainerGradient}
                   colors={
-                    colorSelect === index
+                    colorSelect === item.name
                       ? [item.colors.main, item.colors.dark]
                       : [item.colors.light, item.colors.main, item.colors.dark]
                   }
@@ -161,7 +187,7 @@ function NewFolder({ onCancel }: { onCancel: () => void }) {
                       styles.colorTxt,
                       {
                         color:
-                          colorSelect === index
+                          colorSelect === item.name
                             ? colors.white
                             : item.colors.dark,
                       },
@@ -184,7 +210,8 @@ function NewFolder({ onCancel }: { onCancel: () => void }) {
       <View>
         <BasicButtons
           onPress={() => {
-            onCancel();
+            console.log(iconSelect, colorSelect, valueTitle);
+            handleCreateData(valueTitle, iconSelect, colorSelect);
           }}
         >
           Guardar
@@ -196,8 +223,28 @@ function NewFolder({ onCancel }: { onCancel: () => void }) {
 
 export default function Folder() {
   const { navigate } = useContext(RouterContext);
-
+  const { setFolderName } = useContext(GeneralContext);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [data, setData] = useState<FolderType[]>([]);
+  const getData = async () => {
+    const folders = await getAllFolders();
+    const count = await getNotesCount();
+    console.log(count);
+    setData(
+      folders.map(i => {
+        const f = count.find(it => it.folder === i.title);
+
+        return {
+          ...i,
+          count: f ? f.count : 0,
+        };
+      }),
+    );
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
   return (
     <Fragment>
       <TemplateModal
@@ -210,6 +257,9 @@ export default function Folder() {
           onCancel={() => {
             setShowModal(false);
           }}
+          onReset={() => {
+            getData();
+          }}
         />
       </TemplateModal>
       <View style={styles.container}>
@@ -218,7 +268,7 @@ export default function Folder() {
           <SearchInput placeholder="Buscar carpeta " />
           <View style={styles.container}>
             <FlatList
-              data={DATA}
+              data={data}
               initialNumToRender={10}
               maxToRenderPerBatch={10}
               windowSize={5}
@@ -230,15 +280,16 @@ export default function Folder() {
               renderItem={({ item }) => (
                 <FolderCard
                   title={item.title}
-                  colorName={'cardGreen'}
-                  iconName={'home'}
-                  count={1}
+                  colorName={item.color as keyof typeof objColor}
+                  iconName={item.icon}
+                  count={item.count}
                   onPress={() => {
+                    setFolderName(item.title);
                     navigate('folderNotes');
                   }}
                 />
               )}
-              keyExtractor={item => item.id}
+              keyExtractor={item => String(item.id)}
               ListEmptyComponent={
                 <View>
                   <Text>Sin Carpetas</Text>

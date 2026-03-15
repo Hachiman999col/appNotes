@@ -5,31 +5,48 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import React from 'react';
+import { getColor } from '../../../styles/color';
+import { formatRelativeDate } from '../../../core/utils/date';
 
-const def = `Es un hecho establecido hace demasiado tiempo que un lector se distraerá con el contenido del texto de un sitio mientras que mira su diseño. El punto de usar Lorem Ipsum es que tiene una distribución más o menos normal de las letras, al contrario de usar textos como por ejemplo "Contenido aquí, contenido aquí". Estos textos hacen parecerlo un español que se puede leer. Muchos paquetes de autoedición y editores de páginas web usan el Lorem Ipsum como su texto por defecto, y al hacer una búsqueda de "Lorem Ipsum" va a dar por resultado muchos sitios web que usan este texto si se encuentran en estado de desarrollo. Muchas versiones han evolucionado a través de los años, algunas veces por accidente, otras veces a propósito (por ejemplo insertándole humor y cosas por el estilo).`;
 export default function CardNote(props: {
   colums: number;
   color: string;
+  content: string;
   title: string;
+  time: string;
 }) {
-  const { colums, color, title } = props;
+  const { colums, color, content, title, time } = props;
 
   const { width } = useWindowDimensions();
+
+  const realColor = getColor(color).main;
+  const realTime = formatRelativeDate(time);
+
+  const rHeight = width / colums - 40;
   return (
     <TouchableOpacity
       style={[
         styles.item,
-        { backgroundColor: color, height: width / colums - 40 },
+        { backgroundColor: realColor, height: width / colums - 40 },
       ]}
     >
       <Text style={styles.title}>
         {title.slice(0, 10) + (title.length > 10 ? '...' : '')}
       </Text>
-      <Text style={styles.info}>
-        {def.slice(0, 120) + (def.length > 149 ? '...' : '')}
+      <Text
+        style={[
+          styles.info,
+          {
+            height: rHeight - 90,
+          },
+        ]}
+        numberOfLines={Math.floor((rHeight - 90) / 20)}
+        ellipsizeMode="tail"
+      >
+        {content}
       </Text>
 
-      <Text style={[styles.info, styles.date]}>Hoy</Text>
+      <Text style={[styles.info, styles.date]}>{realTime}</Text>
     </TouchableOpacity>
   );
 }

@@ -1,32 +1,23 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useMemo } from 'react';
 import IconsSvg from '../../iconsSvg';
-import { colors } from '../../../styles/color';
-
-const listColors = {
-  cardRed: colors.cardRed,
-  cardOrange: colors.cardOrange,
-  cardYellow: colors.cardYellow,
-  cardGreen: colors.cardGreen,
-  cardBlue: colors.cardBlue,
-  cardPurple: colors.cardPurple,
-};
+import { objColor } from '../../../styles/color';
 
 interface Props {
   title: string;
   iconName: string;
-  colorName: keyof typeof listColors;
+  colorName: keyof typeof objColor;
   count: number;
   onPress: () => void;
 }
 
 export default function FolderCard(props: Props) {
-  const { title, iconName, colorName, onPress } = props;
+  const { title, iconName, colorName, onPress, count } = props;
 
   const colorData = useMemo(() => {
-    const data = listColors[colorName];
+    const data = objColor[colorName];
     if (!data) {
-      return listColors.cardRed;
+      return objColor.cardRed;
     }
     return data;
   }, [colorName]);
@@ -46,7 +37,7 @@ export default function FolderCard(props: Props) {
         </View>
         <Text style={styles.title}>{title}</Text>
       </View>
-      <Text style={styles.countTxt}>0</Text>
+      <Text style={styles.countTxt}>{count}</Text>
     </TouchableOpacity>
   );
 }

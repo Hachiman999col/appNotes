@@ -20,17 +20,20 @@ import TransitionModal from './src/components/ui/TransitionModal';
 import MenuFooter from './src/components/sections/MenuFooter';
 import Note from './src/views/Note';
 import FolderNotes from './src/views/FolderNotes';
+import { GeneralProvider } from './src/context/generalContext';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
-    <RouterProvider defaultRoute="Login">
-      <SafeAreaProvider>
-        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-        <AppContent />
-      </SafeAreaProvider>
-    </RouterProvider>
+    <GeneralProvider>
+      <RouterProvider defaultRoute="Login">
+        <SafeAreaProvider>
+          <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+          <AppContent />
+        </SafeAreaProvider>
+      </RouterProvider>
+    </GeneralProvider>
   );
 }
 
