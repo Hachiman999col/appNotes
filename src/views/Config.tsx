@@ -1,13 +1,57 @@
 import { View, Text, StyleSheet } from 'react-native';
-import React from 'react';
-import Table from '../components/ui/Table';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import Table, { DataType } from '../components/ui/Table';
 import BasicButtons from '../components/ui/Buttons';
-const data = [
-  { id: '1', name: 'Nota de React', date: '12 Mar', status: 'Hecho' },
-  { id: '2', name: 'Comprar café', date: '14 Mar', status: 'Pendiente' },
-  { id: '3', name: 'Diseñar UI', date: '15 Mar', status: 'En curso' },
-];
+import { getAllFolders, getAllNotes } from '../core/db/dbGet';
+import { deleteAllFolders, deleteAllNotes } from '../core/db/dbDelete';
+import { RouterContext } from '../context/routerContext';
+
+const calculateSizeInKb = (data: any[]): number => {
+  const jsonString = JSON.stringify(data);
+  const sizeInBytes = jsonString.length;
+  const sizeInKb = sizeInBytes / 1024;
+  return sizeInKb;
+};
+
 export default function Config() {
+  const { navigate } = useContext(RouterContext);
+
+  //states
+  const [dataTable, setDataTable] = useState<DataType[]>([]);
+
+  const handleGetData = useCallback(async () => {
+    const notesDb = await getAllNotes();
+
+    const foldersDb = await getAllFolders();
+
+    setDataTable([
+      {
+        id: '1',
+        name: 'carpetas',
+        count: foldersDb.length,
+        size: `${calculateSizeInKb(foldersDb).toFixed(2)} KB`,
+      },
+      {
+        id: '2',
+        name: 'notas',
+        count: notesDb.length,
+        size: `${calculateSizeInKb(notesDb).toFixed(2)} KB`,
+      },
+    ]);
+  }, []);
+
+  const handleDeleteAll = async () => {
+    await deleteAllFolders();
+    await deleteAllNotes();
+    navigate('homeMain');
+  };
+
+  useEffect(() => {
+    handleGetData();
+
+    return () => {};
+  }, [handleGetData]);
+
   return (
     <View style={styles.container}>
       <View style={styles.containerMain}>
@@ -16,19 +60,19 @@ export default function Config() {
         <View>
           <Text style={styles.subTitle}>Info de notas</Text>
           <Table
-            data={data}
+            data={dataTable}
             header={[
               {
                 label: 'Nombre',
                 name: 'name',
               },
               {
-                label: 'fecha',
-                name: 'date',
+                label: 'Cantidad',
+                name: 'count',
               },
               {
-                label: 'Estatus',
-                name: 'status',
+                label: 'Tamaño',
+                name: 'size',
               },
             ]}
           />
@@ -36,7 +80,14 @@ export default function Config() {
 
         <View>
           <Text style={styles.subTitle}>Borrado del sistema</Text>
-          <BasicButtons variant="error">Borrar todos los datos</BasicButtons>
+          <BasicButtons
+            variant="error"
+            onPress={() => {
+              handleDeleteAll();
+            }}
+          >
+            Borrar todos los datos
+          </BasicButtons>
         </View>
       </View>
     </View>

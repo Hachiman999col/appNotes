@@ -6,7 +6,7 @@ import {
   TextInput,
   useWindowDimensions,
 } from 'react-native';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { colors } from '../styles/color';
 import IconsSvg from '../components/iconsSvg';
 import { RouterContext } from '../context/routerContext';
@@ -14,26 +14,69 @@ import BasicButtons from '../components/ui/Buttons';
 import useKeyBoardStatus from '../hooks/useKeyBoardStatus';
 import { GeneralContext } from '../context/generalContext';
 import { postCreateNote } from '../core/db/dbPost';
+import { getNotesByid } from '../core/db/dbGet';
+import { ResponseApiNote } from '../core/db/types';
+import { putNote } from '../core/db/dbPut';
+import { deleteNote } from '../core/db/dbDelete';
 
 export default function Note() {
   const { height } = useWindowDimensions();
+
   const isActive = useKeyBoardStatus();
   const { goBack } = useContext(RouterContext);
-  const { folder } = useContext(GeneralContext);
+  const { folder, idNote, setIdNoteDb } = useContext(GeneralContext);
 
   const [title, setTitle] = useState<string>('');
   const [content, setContect] = useState<string>('');
-  const handleSave = useCallback(async () => {
-    const today = new Date();
-    await postCreateNote({
-      title: title,
-      content: content,
-      dateCreated: today.toISOString(),
-      folder: folder,
-    });
+
+  const [prevData, setPrevData] = useState<ResponseApiNote | null>(null);
+
+  const handleDelete = async (id: number) => {
+    if (typeof id !== 'number') return;
+    await deleteNote(id);
 
     goBack();
-  }, [title, content, folder, goBack]);
+  };
+  const handleSave = useCallback(async () => {
+    const today = new Date();
+
+    if (prevData) {
+      await putNote({
+        id: prevData.id,
+        title: title,
+        content: content,
+        dateCreated: today.toISOString(),
+      });
+    } else {
+      await postCreateNote({
+        title: title,
+        content: content,
+        dateCreated: today.toISOString(),
+        folder: folder || 'Default',
+      });
+    }
+
+    goBack();
+  }, [title, content, folder, goBack, prevData]);
+
+  const handleGetData = useCallback(async () => {
+    if (!idNote) return;
+
+    const data = await getNotesByid(idNote);
+    if (!data) return;
+    setTitle(data.title);
+    setContect(data.content);
+    setPrevData(data);
+  }, [idNote]);
+
+  useEffect(() => {
+    if (!idNote) return;
+    handleGetData();
+    return () => {
+      setIdNoteDb();
+    };
+  }, [idNote, handleGetData, setIdNoteDb]);
+
   return (
     <View style={styles.container}>
       <View style={styles.containerMain}>
@@ -47,7 +90,20 @@ export default function Note() {
             <IconsSvg name="arrowleft" strokeWidth={2} />
             <Text>Volver</Text>
           </Pressable>
-          <Text style={styles.titleModalTxt}>Nueva nota</Text>
+
+          {prevData ? (
+            <BasicButtons
+              icon="folder"
+              variant="error"
+              onPress={() => {
+                handleDelete(prevData.id);
+              }}
+            >
+              Borrar nota
+            </BasicButtons>
+          ) : (
+            <Text style={styles.titleModalTxt}>Nueva nota</Text>
+          )}
         </View>
         <View style={styles.contentTitle}>
           <TextInput
@@ -85,7 +141,7 @@ export default function Note() {
               handleSave();
             }}
           >
-            Guardar Nota
+            {prevData ? 'Actualizar Nota' : 'Guardar Nota'}
           </BasicButtons>
         </View>
       </View>

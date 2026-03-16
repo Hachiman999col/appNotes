@@ -31,12 +31,10 @@ export async function getNotesWithFolderInfo(): Promise<Note[]> {
   }
 }
 export async function getNotesByid(
-  folder: string,
+  id: number,
 ): Promise<ResponseApiNote | null> {
   try {
-    const dto = (await NotesModule.getNotesByFolder(
-      folder,
-    )) as ResponseApiNote[];
+    const dto = (await NotesModule.getNotesById(id)) as ResponseApiNote[];
 
     if (!dto.length) return null;
     return dto[0];

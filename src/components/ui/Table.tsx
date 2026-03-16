@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, FlatList } from 'react-native';
 import React from 'react';
 import { colors } from '../../styles/color';
 
-type DataType = {
+export type DataType = {
   id: string | number;
   [k: string]: string | number;
 };

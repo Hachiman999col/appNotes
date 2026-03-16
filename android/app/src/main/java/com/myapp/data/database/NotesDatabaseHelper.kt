@@ -1,5 +1,5 @@
 package com.myapp.data.database
-
+import java.time.LocalDate
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -28,6 +28,11 @@ class NotesDatabaseHelper(context: Context) : SQLiteOpenHelper(context, "Notas.d
                 color TEXT
             )
         """.trimIndent())
+
+        db.execSQL("""
+        INSERT INTO FOLDER (title, icon, dateCreated, color) 
+        VALUES ('Default', 'folder', '${LocalDate.now()}', 'cardBlue')
+    """.trimIndent())
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {

@@ -3,9 +3,11 @@ import IconsSvg from '../iconsSvg';
 
 interface Props {
   placeholder?: string;
+  value?: string;
+  onChange?: (txt: string) => void;
 }
 export default function SearchInput(props: Props) {
-  const { placeholder = 'Buscar toda...' } = props;
+  const { placeholder = 'Buscar toda...', value, onChange } = props;
   return (
     <View style={styles.containerInput}>
       <View style={styles.searchSection}>
@@ -18,10 +20,14 @@ export default function SearchInput(props: Props) {
           style={styles.searchIcon}
         />
         <TextInput
+          value={value}
           style={styles.input}
           placeholder={placeholder}
           placeholderTextColor="#8e9aaf"
           underlineColorAndroid="transparent"
+          onChangeText={(txt: string) => {
+            if (onChange) onChange(txt);
+          }}
         />
       </View>
     </View>

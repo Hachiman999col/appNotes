@@ -3,6 +3,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import java.time.LocalDate
 class FolderDao(context: Context) {
     private val dbHelper = NotesDatabaseHelper(context)
 
@@ -50,14 +51,31 @@ class FolderDao(context: Context) {
     //--- deletes
     fun deleteFolder(id: Int): Int {
         val db = dbHelper.writableDatabase
-        return db.delete("FOLDER", "id = ?", arrayOf(id.toString()))
+        val data =  db.delete("FOLDER", "id = ?", arrayOf(id.toString()))
+
+ return data
+
     }
 
-    fun deleteAllFolders(): Int {
-        val db = dbHelper.writableDatabase
+  fun deleteAllFolders(): Int {
+    val db = dbHelper.writableDatabase
+    
+  
+    val deletedCount = db.delete("FOLDER", null, null)
+    
+    
+    db.execSQL("DELETE FROM sqlite_sequence WHERE name='FOLDER'")
 
-        return db.delete("FOLDER", null, null)
+  
+    val values = ContentValues().apply {
+        put("title", "Default")
+        put("icon", "folder")
+        put("dateCreated", LocalDate.now().toString()) 
+        put("color", "cardBlue")
     }
-
+    db.insert("FOLDER", null, values)
+    
+    return deletedCount
+}
 
 }

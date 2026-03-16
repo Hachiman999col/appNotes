@@ -1,13 +1,22 @@
-import { View, StyleSheet, TextInput, TextInputProps } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  Text,
+  TextInputProps,
+} from 'react-native';
 import React from 'react';
 import IconsSvg from '../iconsSvg';
+import { colors } from '../../styles/color';
 
 interface Props extends TextInputProps {
   iconName?: string;
+  error?: boolean;
+  msjError?: string;
 }
 
 export default function BasicInput(props: Props) {
-  const { iconName, value, onChangeText, ...argProps } = props;
+  const { iconName, value, onChangeText, error, msjError, ...argProps } = props;
   return (
     <View style={styles.containerInput}>
       <View style={styles.searchSection}>
@@ -29,6 +38,9 @@ export default function BasicInput(props: Props) {
           {...argProps}
         />
       </View>
+      {error && (
+        <Text style={styles.errorMsj}>{msjError || 'Error en el campo'}</Text>
+      )}
     </View>
   );
 }
@@ -50,6 +62,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginRight: 10,
     opacity: 0.5, // Para que no se vea tan fuerte el emoji
+  },
+  errorMsj: {
+    paddingLeft: 4,
+    marginTop: 6,
+    color: colors.cardRed.dark,
   },
   input: {
     flex: 1,

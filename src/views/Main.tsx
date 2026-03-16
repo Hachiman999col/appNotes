@@ -11,9 +11,11 @@ import { Note } from '../core/db/types';
 export default function Main() {
   const { navigate } = useContext(RouterContext);
   const [data, setData] = useState<Note[]>([]);
+
+  const [filterValue, setFilterValue] = useState<string>('');
   const handleAsync = async () => {
     const dataDb = await getNotesWithFolderInfo();
-    console.log(dataDb);
+
     setData(dataDb);
   };
 
@@ -34,8 +36,13 @@ export default function Main() {
             Nueva nota
           </BasicButtons>
         </View>
-        <SearchInput />
-        <BoardNotes data={data} />
+        <SearchInput
+          value={filterValue}
+          onChange={txt => {
+            setFilterValue(txt);
+          }}
+        />
+        <BoardNotes data={data} valueFilter={filterValue} />
       </View>
     </View>
   );

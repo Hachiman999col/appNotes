@@ -72,6 +72,7 @@ function NewFolder({
   const [iconSelect, setIconSelect] = useState<string>('');
   const [colorSelect, setColorSelect] = useState<string>('');
   const [valueTitle, setValueTitle] = useState<string>('');
+  const [existFolder, setExistFolder] = useState<boolean>(false);
 
   const handleCreateData = async (
     title: string,
@@ -80,7 +81,7 @@ function NewFolder({
   ) => {
     const today = new Date();
     const id = await postCreatefolder({
-      title,
+      title: title.trim(),
       icon,
       color,
       dateCreated: today.toISOString(),
@@ -92,6 +93,15 @@ function NewFolder({
     } else {
       onCancel();
     }
+  };
+
+  const handleEndEdit = async (txt: string) => {
+    const folders = await getAllFolders();
+    const names = folders.map(i => i.title.trim());
+
+    const exit = names.includes(txt);
+
+    setExistFolder(exit);
   };
   return (
     <View
@@ -122,6 +132,13 @@ function NewFolder({
           placeholder="Nombre de la carpeta"
           value={valueTitle}
           onChangeText={setValueTitle}
+          onEndEditing={e => {
+            const txt = e.nativeEvent.text;
+
+            handleEndEdit(String(txt));
+          }}
+          error={existFolder}
+          msjError="Este campo ya existe"
         />
 
         <View>
@@ -210,7 +227,7 @@ function NewFolder({
       <View>
         <BasicButtons
           onPress={() => {
-            console.log(iconSelect, colorSelect, valueTitle);
+            if (existFolder) return;
             handleCreateData(valueTitle, iconSelect, colorSelect);
           }}
         >
@@ -229,7 +246,7 @@ export default function Folder() {
   const getData = async () => {
     const folders = await getAllFolders();
     const count = await getNotesCount();
-    console.log(count);
+
     setData(
       folders.map(i => {
         const f = count.find(it => it.folder === i.title);

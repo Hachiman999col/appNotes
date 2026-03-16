@@ -10,13 +10,15 @@ import IconsSvg from '../components/iconsSvg';
 import { GeneralContext } from '../context/generalContext';
 import { getFolderByTitle, getNotesByFolder } from '../core/db/dbGet';
 import { Note } from '../core/db/types';
+import { deleteFolder, deleteNote } from '../core/db/dbDelete';
 
-export default function Main() {
+export default function FolderNotes() {
   const { navigate } = useContext(RouterContext);
 
   const { folder } = useContext(GeneralContext);
 
   const [data, setData] = useState<Note[]>([]);
+  const [filterValue, setFilterValue] = useState<string>('');
 
   const handleGetData = useCallback(async (folderName: string) => {
     const notes = await getNotesByFolder(folderName);
@@ -31,6 +33,20 @@ export default function Main() {
     });
     setData(newData);
   }, []);
+
+  const handleDelete = useCallback(async () => {
+    if (!folder) return;
+
+    const dataDb = await getFolderByTitle(folder);
+    if (!dataDb) return;
+    await deleteFolder(dataDb.id);
+
+    const listPromise = data.map(i => deleteNote(i.id));
+
+    await Promise.all(listPromise);
+
+    navigate('folderMain');
+  }, [folder, data, navigate]);
   useEffect(() => {
     if (!folder) return;
 
@@ -61,9 +77,27 @@ export default function Main() {
             Nueva nota
           </BasicButtons>
         </View>
-        <Text style={styles.title}>Carpeta notas</Text>
-        <SearchInput />
-        <BoardNotes data={data} />
+        <Text style={styles.title}>Carpeta {folder}</Text>
+        <SearchInput
+          value={filterValue}
+          onChange={txt => {
+            setFilterValue(txt);
+          }}
+        />
+        <BoardNotes data={data} valueFilter={filterValue} />
+        {folder !== 'Default' && (
+          <View>
+            <BasicButtons
+              variant="error"
+              icon={'folder'}
+              onPress={() => {
+                handleDelete();
+              }}
+            >
+              Borrar carpeta
+            </BasicButtons>
+          </View>
+        )}
       </View>
     </View>
   );
