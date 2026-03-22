@@ -6,6 +6,7 @@ import {
   Animated,
   PanResponder,
   useWindowDimensions,
+  useColorScheme,
 } from 'react-native';
 import React, { useMemo, useRef } from 'react';
 import { colors } from '../../styles/color';
@@ -80,6 +81,7 @@ export function DraggableFAB() {
 
 export default function BasicButtons(props: BasicProps) {
   const { variant = 'default', children, icon, style, ...argProps } = props;
+  const isDarkMode = useColorScheme() === 'dark';
 
   const bgColor = useMemo(() => {
     if (variant === 'default') return colors.cardPurple.main;
@@ -87,27 +89,54 @@ export default function BasicButtons(props: BasicProps) {
     if (variant === 'error') return colors.cardRed.main;
     return colors.cardPurple.main;
   }, [variant]);
+
+  const bgColorD = useMemo(() => {
+    if (variant === 'default') return colors.cardPurple.dark;
+    if (variant === 'warnning') return colors.cardYellow.dark;
+    if (variant === 'error') return colors.cardRed.dark;
+    return colors.cardPurple.dark;
+  }, [variant]);
   const txtColor = useMemo(() => {
     if (variant === 'default') return colors.cardPurple.dark;
     if (variant === 'warnning') return colors.cardYellow.dark;
     if (variant === 'error') return colors.cardRed.dark;
     return colors.cardPurple.dark;
   }, [variant]);
+
+  const txtColorD = useMemo(() => {
+    if (variant === 'default') return colors.cardPurple.light;
+    if (variant === 'warnning') return colors.cardYellow.light;
+    if (variant === 'error') return colors.cardRed.light;
+    return colors.cardPurple.light;
+  }, [variant]);
   return (
     <Pressable
       style={
         typeof style === 'function'
-          ? state => [styles.btn, { backgroundColor: bgColor }, style(state)]
-          : [styles.btn, { backgroundColor: bgColor }, style]
+          ? state => [
+              styles.btn,
+              { backgroundColor: isDarkMode ? bgColorD : bgColor },
+              style(state),
+            ]
+          : [
+              styles.btn,
+              { backgroundColor: isDarkMode ? bgColorD : bgColor },
+              style,
+            ]
       }
       {...argProps}
     >
-      {icon && <IconsSvg name="folderPlus" stroke={txtColor} />}
+      {icon && (
+        <IconsSvg
+          name="folderPlus"
+          stroke={isDarkMode ? txtColorD : txtColor}
+        />
+      )}
       <Text
         style={[
           styles.text,
           {
-            color: txtColor,
+            color: isDarkMode ? txtColorD : txtColor,
           },
         ]}
       >

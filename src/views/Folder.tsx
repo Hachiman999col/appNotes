@@ -5,6 +5,7 @@ import {
   FlatList,
   useWindowDimensions,
   Pressable,
+  useColorScheme,
 } from 'react-native';
 import React, { Fragment, useContext, useEffect, useState } from 'react';
 import SearchInput from '../components/Form/SearchInput';
@@ -21,6 +22,7 @@ import { postCreatefolder } from '../core/db/dbPost';
 import { getAllFolders, getNotesCount } from '../core/db/dbGet';
 import { ResponseApiFolder } from '../core/db/types';
 import { GeneralContext } from '../context/generalContext';
+import Typography, { TypographyBasic } from '../components/ui/Typography';
 
 interface FolderType extends ResponseApiFolder {
   count: number;
@@ -67,6 +69,7 @@ function NewFolder({
   onCancel: () => void;
   onReset: () => void;
 }) {
+  const isDarkMode = useColorScheme() === 'dark';
   const { width, height } = useWindowDimensions();
   //states
   const [iconSelect, setIconSelect] = useState<string>('');
@@ -106,7 +109,7 @@ function NewFolder({
   return (
     <View
       style={[
-        styles.containerMain,
+        isDarkMode ? styles.containerMainD : styles.containerMain,
         {
           height: height,
 
@@ -121,10 +124,16 @@ function NewFolder({
             onCancel();
           }}
         >
-          <IconsSvg name="arrowleft" strokeWidth={2} />
-          <Text>Volver</Text>
+          <IconsSvg
+            name="arrowleft"
+            strokeWidth={2}
+            stroke={isDarkMode ? colors.white : colors.dark}
+          />
+          <TypographyBasic>Volver</TypographyBasic>
         </Pressable>
-        <Text style={styles.titleModalTxt}>Nueva carpeta</Text>
+        <TypographyBasic style={styles.titleModalTxt}>
+          Nueva carpeta
+        </TypographyBasic>
       </View>
       <View style={styles.container}>
         <BasicInput
@@ -142,7 +151,10 @@ function NewFolder({
         />
 
         <View>
-          <Text style={styles.iconTitle}>Seleccione el icono</Text>
+          <TypographyBasic style={styles.iconTitle}>
+            Seleccione el icono
+          </TypographyBasic>
+
           <FlatList
             data={listIcons}
             horizontal
@@ -168,14 +180,18 @@ function NewFolder({
             keyExtractor={item => item}
             ListEmptyComponent={
               <View>
-                <Text>Sin Carpetas</Text>
+                <TypographyBasic style={styles.titleModalTxt}>
+                  Sin Carpetas
+                </TypographyBasic>
               </View>
             }
           />
         </View>
 
         <View>
-          <Text style={styles.iconTitle}>Perfil de color</Text>
+          <TypographyBasic style={styles.iconTitle}>
+            Perfil de color
+          </TypographyBasic>
           <FlatList
             style={{
               height: height - 420,
@@ -228,6 +244,12 @@ function NewFolder({
         <BasicButtons
           onPress={() => {
             if (existFolder) return;
+
+            if (!valueTitle) return;
+
+            if (!iconSelect) return;
+
+            if (!colorSelect) return;
             handleCreateData(valueTitle, iconSelect, colorSelect);
           }}
         >
@@ -239,6 +261,7 @@ function NewFolder({
 }
 
 export default function Folder() {
+  const isDarkMode = useColorScheme() === 'dark';
   const { navigate } = useContext(RouterContext);
   const { setFolderName } = useContext(GeneralContext);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -280,8 +303,8 @@ export default function Folder() {
         />
       </TemplateModal>
       <View style={styles.container}>
-        <View style={styles.containerMain}>
-          <Text style={styles.title}>Carpetas</Text>
+        <View style={isDarkMode ? styles.containerMainD : styles.containerMain}>
+          <Typography variant="title">Carpetas</Typography>
           <SearchInput placeholder="Buscar carpeta " />
           <View style={styles.container}>
             <FlatList
@@ -338,6 +361,11 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 8,
     backgroundColor: colors.white,
   },
+  containerMainD: {
+    flex: 1,
+    paddingHorizontal: 8,
+    backgroundColor: colors.dark,
+  },
   title: {
     fontWeight: '600',
     fontSize: 26,
@@ -358,7 +386,6 @@ export const styles = StyleSheet.create({
   titleModalTxt: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.cardPurple.dark,
   },
 
   titleModalGoBack: {

@@ -1,7 +1,14 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  useWindowDimensions,
+  useColorScheme,
+} from 'react-native';
 import React, { useMemo } from 'react';
 import IconsSvg from '../../iconsSvg';
 import { objColor } from '../../../styles/color';
+import Typography, { TypographyBasic } from '../../ui/Typography';
 
 interface Props {
   title: string;
@@ -13,6 +20,8 @@ interface Props {
 
 export default function FolderCard(props: Props) {
   const { title, iconName, colorName, onPress, count } = props;
+  const isDarkMode = useColorScheme() === 'dark';
+  const { width } = useWindowDimensions();
 
   const colorData = useMemo(() => {
     const data = objColor[colorName];
@@ -24,20 +33,27 @@ export default function FolderCard(props: Props) {
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
-      <View style={styles.containerTitle}>
+      <View style={[styles.containerTitle, { width: width - 100 }]}>
         <View
           style={[
             styles.containerIcon,
             {
-              backgroundColor: colorData.main,
+              backgroundColor: colorData[isDarkMode ? 'dark' : 'main'],
             },
           ]}
         >
-          <IconsSvg name={iconName} stroke={colorData.dark} />
+          <IconsSvg
+            name={iconName}
+            stroke={colorData[isDarkMode ? 'light' : 'dark']}
+          />
         </View>
-        <Text style={styles.title}>{title}</Text>
+        <Typography variant="subTitle" style={styles.title}>
+          {title}
+        </Typography>
       </View>
-      <Text style={styles.countTxt}>{count}</Text>
+      <TypographyBasic style={styles.countTxt}>
+        {String(count || 0)}
+      </TypographyBasic>
     </TouchableOpacity>
   );
 }
@@ -65,8 +81,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 18,
-    fontWeight: '500',
+    marginTop: 4,
   },
   countTxt: {
     fontSize: 16,

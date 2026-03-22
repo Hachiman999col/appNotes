@@ -1,10 +1,10 @@
 import {
   View,
-  Text,
   StyleSheet,
   Pressable,
   TextInput,
   useWindowDimensions,
+  useColorScheme,
 } from 'react-native';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { colors } from '../styles/color';
@@ -18,6 +18,7 @@ import { getNotesByid } from '../core/db/dbGet';
 import { ResponseApiNote } from '../core/db/types';
 import { putNote } from '../core/db/dbPut';
 import { deleteNote } from '../core/db/dbDelete';
+import { TypographyBasic } from '../components/ui/Typography';
 
 export default function Note() {
   const { height } = useWindowDimensions();
@@ -25,7 +26,7 @@ export default function Note() {
   const isActive = useKeyBoardStatus();
   const { goBack } = useContext(RouterContext);
   const { folder, idNote, setIdNoteDb } = useContext(GeneralContext);
-
+  const isDarkMode = useColorScheme() === 'dark';
   const [title, setTitle] = useState<string>('');
   const [content, setContect] = useState<string>('');
 
@@ -87,8 +88,12 @@ export default function Note() {
               goBack();
             }}
           >
-            <IconsSvg name="arrowleft" strokeWidth={2} />
-            <Text>Volver</Text>
+            <IconsSvg
+              name="arrowleft"
+              strokeWidth={2}
+              stroke={isDarkMode ? colors.white : colors.dark}
+            />
+            <TypographyBasic>Volver</TypographyBasic>
           </Pressable>
 
           {prevData ? (
@@ -102,12 +107,26 @@ export default function Note() {
               Borrar nota
             </BasicButtons>
           ) : (
-            <Text style={styles.titleModalTxt}>Nueva nota</Text>
+            <TypographyBasic
+              style={[
+                styles.titleModalTxt,
+                {
+                  color: isDarkMode
+                    ? colors.cardPurple.light
+                    : colors.cardPurple.dark,
+                },
+              ]}
+            >
+              Nueva nota
+            </TypographyBasic>
           )}
         </View>
         <View style={styles.contentTitle}>
           <TextInput
-            style={styles.inputTitle}
+            style={[
+              styles.inputTitle,
+              { color: isDarkMode ? colors.white : '#696b6e' },
+            ]}
             placeholder="Titulo"
             placeholderTextColor="#8e9aaf"
             value={title}
@@ -123,7 +142,11 @@ export default function Note() {
           <TextInput
             style={[
               styles.inputNote,
-              { height: height - 250 - (isActive ? 300 : 0) },
+              {
+                height: height - 250 - (isActive ? 300 : 0),
+
+                color: isDarkMode ? colors.white : '#696b6e',
+              },
             ]}
             value={content}
             onChangeText={setContect}
@@ -170,9 +193,9 @@ const styles = StyleSheet.create({
     color: colors.cardPurple.dark,
   },
   titleModalTxt: {
+    paddingTop: 10,
     fontSize: 18,
     fontWeight: '600',
-    color: colors.cardPurple.dark,
   },
 
   contentTitle: {
@@ -184,11 +207,9 @@ const styles = StyleSheet.create({
   inputTitle: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#696b6e',
   },
   inputNote: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#696b6e',
   },
 });

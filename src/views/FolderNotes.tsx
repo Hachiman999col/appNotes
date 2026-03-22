@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, useColorScheme } from 'react-native';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import BoardNotes from '../components/sections/BoardNotes';
@@ -11,10 +11,11 @@ import { GeneralContext } from '../context/generalContext';
 import { getFolderByTitle, getNotesByFolder } from '../core/db/dbGet';
 import { Note } from '../core/db/types';
 import { deleteFolder, deleteNote } from '../core/db/dbDelete';
+import { TypographyBasic } from '../components/ui/Typography';
 
 export default function FolderNotes() {
   const { navigate } = useContext(RouterContext);
-
+  const isDarkMode = useColorScheme() === 'dark';
   const { folder } = useContext(GeneralContext);
 
   const [data, setData] = useState<Note[]>([]);
@@ -65,8 +66,12 @@ export default function FolderNotes() {
               navigate('folderMain');
             }}
           >
-            <IconsSvg name="arrowleft" strokeWidth={2} />
-            <Text>Volver</Text>
+            <IconsSvg
+              name="arrowleft"
+              strokeWidth={2}
+              stroke={isDarkMode ? colors.white : colors.dark}
+            />
+            <TypographyBasic>Volver</TypographyBasic>
           </Pressable>
           <BasicButtons
             icon="folderPlus"
@@ -77,7 +82,7 @@ export default function FolderNotes() {
             Nueva nota
           </BasicButtons>
         </View>
-        <Text style={styles.title}>Carpeta {folder}</Text>
+        <TypographyBasic style={styles.title}>Carpeta {folder}</TypographyBasic>
         <SearchInput
           value={filterValue}
           onChange={txt => {

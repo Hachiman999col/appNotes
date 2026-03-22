@@ -4,6 +4,7 @@ import {
   TextInput,
   Text,
   TextInputProps,
+  useColorScheme,
 } from 'react-native';
 import React from 'react';
 import IconsSvg from '../iconsSvg';
@@ -17,13 +18,16 @@ interface Props extends TextInputProps {
 
 export default function BasicInput(props: Props) {
   const { iconName, value, onChangeText, error, msjError, ...argProps } = props;
+  const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.containerInput}>
-      <View style={styles.searchSection}>
+      <View
+        style={isDarkMode ? styles.searchSectionDark : styles.searchSection}
+      >
         {iconName && (
           <IconsSvg
             name={iconName}
-            stroke="#696b6e"
+            stroke={isDarkMode ? colors.white : '#696b6e'}
             strokeWidth={2}
             style={styles.searchIcon}
           />
@@ -32,7 +36,10 @@ export default function BasicInput(props: Props) {
         <TextInput
           value={value}
           onChangeText={onChangeText}
-          style={styles.input}
+          style={[
+            styles.input,
+            { color: isDarkMode ? colors.white : '#495057' },
+          ]}
           placeholderTextColor="#8e9aaf"
           underlineColorAndroid="transparent"
           {...argProps}
@@ -48,20 +55,29 @@ export default function BasicInput(props: Props) {
 const styles = StyleSheet.create({
   containerInput: {
     paddingVertical: 20,
-    backgroundColor: '#f8f9fa',
   },
   searchSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f1f3f6', // Color de fondo grisáceo suave del input
-    borderRadius: 50, // Hace que sea totalmente ovalado
+
     paddingHorizontal: 15,
-    height: 55, // Altura del input
+    height: 55,
+  },
+  searchSectionDark: {
+    borderColor: '#f1f3f6',
+    borderWidth: 2,
+    borderRadius: 50,
+
+    flexDirection: 'row',
+    alignItems: 'center',
+
+    paddingHorizontal: 15,
+    height: 55,
   },
   searchIcon: {
     fontSize: 18,
     marginRight: 10,
-    opacity: 0.5, // Para que no se vea tan fuerte el emoji
+    opacity: 0.5,
   },
   errorMsj: {
     paddingLeft: 4,
@@ -71,7 +87,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 18,
-    color: '#495057', // Color del texto al escribir
+
     height: '100%',
   },
 });

@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, useColorScheme, View } from 'react-native';
 import IconsSvg from '../iconsSvg';
 
 interface Props {
@@ -8,9 +8,15 @@ interface Props {
 }
 export default function SearchInput(props: Props) {
   const { placeholder = 'Buscar toda...', value, onChange } = props;
+  const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.containerInput}>
-      <View style={styles.searchSection}>
+      <View
+        style={[
+          styles.searchSection,
+          isDarkMode ? styles.searchSectionDark : styles.searchSectionLight,
+        ]}
+      >
         {/* Icono de lupa usando Unicode */}
 
         <IconsSvg
@@ -36,15 +42,22 @@ export default function SearchInput(props: Props) {
 const styles = StyleSheet.create({
   containerInput: {
     paddingVertical: 20,
-    backgroundColor: '#f8f9fa',
   },
   searchSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f1f3f6',
+
     borderRadius: 50,
     paddingHorizontal: 15,
     height: 55,
+  },
+  searchSectionDark: {
+    borderColor: '#f1f3f6',
+    borderWidth: 2,
+    borderRadius: 50,
+  },
+  searchSectionLight: {
+    backgroundColor: '#f1f3f6',
   },
   searchIcon: {
     fontSize: 18,

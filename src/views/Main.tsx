@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 
 import BoardNotes from '../components/sections/BoardNotes';
@@ -7,6 +7,7 @@ import BasicButtons from '../components/ui/Buttons';
 import { RouterContext } from '../context/routerContext';
 import { getNotesWithFolderInfo } from '../core/db/dbGet';
 import { Note } from '../core/db/types';
+import Typography from '../components/ui/Typography';
 
 export default function Main() {
   const { navigate } = useContext(RouterContext);
@@ -26,7 +27,8 @@ export default function Main() {
     <View style={styles.container}>
       <View style={styles.containerMain}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Mis notas</Text>
+          <Typography variant="title">Mis notas</Typography>
+
           <BasicButtons
             icon="folderPlus"
             onPress={() => {

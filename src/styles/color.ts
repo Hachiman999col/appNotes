@@ -10,7 +10,7 @@ export const colors = {
   orange: '#f8b981',
   orangeDark: '#e37f29',
   white: '#fafafa',
-
+  dark: '#2e2e2e',
   ...objColor,
 };
 export function getColor(name: string): {

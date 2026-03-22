@@ -1,4 +1,10 @@
-import { View, Modal, StyleSheet, useWindowDimensions } from 'react-native';
+import {
+  View,
+  Modal,
+  StyleSheet,
+  useWindowDimensions,
+  useColorScheme,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import AnimatedGradientTransition from './AnimatedGradient';
 import { colors } from '../../styles/color';
@@ -14,7 +20,16 @@ const colorsAnimation = [
   [colors.cardGreen.light, colors.cardGreen.main],
   [colors.cardBlue.light, colors.cardBlue.main],
 ];
-
+const colorsAnimationD = [
+  [colors.cardPurple.main, colors.cardPurple.dark],
+  [colors.cardBlue.main, colors.cardBlue.dark],
+  [colors.cardGreen.main, colors.cardGreen.dark],
+  [colors.cardYellow.main, colors.cardYellow.dark],
+  [colors.cardOrange.main, colors.cardOrange.dark],
+  [colors.cardYellow.main, colors.cardYellow.dark],
+  [colors.cardGreen.main, colors.cardGreen.dark],
+  [colors.cardBlue.main, colors.cardBlue.dark],
+];
 const logoColor = [
   colors.cardPurple.dark,
   colors.cardBlue.dark,
@@ -26,7 +41,20 @@ const logoColor = [
   colors.cardBlue.dark,
 ];
 
+const logoColorD = [
+  colors.cardPurple.light,
+  colors.cardBlue.light,
+  colors.cardGreen.light,
+  colors.cardYellow.light,
+  colors.cardOrange.light,
+  colors.cardYellow.light,
+  colors.cardGreen.light,
+  colors.cardBlue.light,
+];
+
 export default function TransitionModal({ open = false }: { open?: boolean }) {
+  const isDarkMode = useColorScheme() === 'dark';
+
   const [colorIndex, setColorIndex] = useState<number>(0);
 
   const { width, height } = useWindowDimensions();
@@ -62,7 +90,11 @@ export default function TransitionModal({ open = false }: { open?: boolean }) {
         ]}
       >
         <AnimatedGradientTransition
-          colors={colorsAnimation[colorIndex]}
+          colors={
+            isDarkMode
+              ? colorsAnimationD[colorIndex]
+              : colorsAnimation[colorIndex]
+          }
           style={{
             height: height,
 
@@ -73,7 +105,7 @@ export default function TransitionModal({ open = false }: { open?: boolean }) {
           <IconsSvg
             name="note"
             size={width * 0.3}
-            fill={logoColor[colorIndex]}
+            fill={isDarkMode ? logoColorD[colorIndex] : logoColor[colorIndex]}
           />
         </View>
       </View>
