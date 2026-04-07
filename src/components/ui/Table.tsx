@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import React from 'react';
 import { colors } from '../../styles/color';
+import { TypographyBasic } from './Typography';
 
 export type DataType = {
   id: string | number;
@@ -47,14 +48,14 @@ export default function Table({
           <View style={styles.row}>
             {header.map((itemK, indexK) => {
               return (
-                <Text
+                <TypographyBasic
                   key={
                     item.name + index.toString() + indexK.toString() + 'cell'
                   }
                   style={[styles.cell, { flex: itemK?.flex || 1 }]}
                 >
                   {item[itemK.name]}
-                </Text>
+                </TypographyBasic>
               );
             })}
           </View>
@@ -67,7 +68,6 @@ export default function Table({
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    backgroundColor: colors.white,
   },
   header: {
     flexDirection: 'row',

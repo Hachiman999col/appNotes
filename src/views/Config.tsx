@@ -1,10 +1,11 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import Table, { DataType } from '../components/ui/Table';
 import BasicButtons from '../components/ui/Buttons';
 import { getAllFolders, getAllNotes } from '../core/db/dbGet';
 import { deleteAllFolders, deleteAllNotes } from '../core/db/dbDelete';
 import { RouterContext } from '../context/routerContext';
+import { TypographyBasic } from '../components/ui/Typography';
 
 const calculateSizeInKb = (data: any[]): number => {
   const jsonString = JSON.stringify(data);
@@ -55,10 +56,14 @@ export default function Config() {
   return (
     <View style={styles.container}>
       <View style={styles.containerMain}>
-        <Text style={styles.title}>Datos del sistema</Text>
+        <TypographyBasic style={styles.title}>
+          Datos del sistema
+        </TypographyBasic>
 
         <View>
-          <Text style={styles.subTitle}>Info de notas</Text>
+          <TypographyBasic style={styles.subTitle}>
+            Info de notas
+          </TypographyBasic>
           <Table
             data={dataTable}
             header={[
@@ -79,7 +84,9 @@ export default function Config() {
         </View>
 
         <View>
-          <Text style={styles.subTitle}>Borrado del sistema</Text>
+          <TypographyBasic style={styles.subTitle}>
+            Borrado del sistema
+          </TypographyBasic>
           <BasicButtons
             variant="error"
             onPress={() => {
