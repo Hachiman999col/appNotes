@@ -264,27 +264,32 @@ export default function Folder() {
   const isDarkMode = useColorScheme() === 'dark';
   const { navigate } = useContext(RouterContext);
   const { setFolderName } = useContext(GeneralContext);
+  const [filterValue, setFilterValue] = useState<string>('');
   const [showModal, setShowModal] = useState<boolean>(false);
   const [data, setData] = useState<FolderType[]>([]);
-  const getData = async () => {
+  const getData = async (filter: string) => {
     const folders = await getAllFolders();
     const count = await getNotesCount();
 
-    setData(
-      folders.map(i => {
-        const f = count.find(it => it.folder === i.title);
+    const dataRaw = folders.map(i => {
+      const f = count.find(it => it.folder === i.title);
 
-        return {
-          ...i,
-          count: f ? f.count : 0,
-        };
-      }),
+      return {
+        ...i,
+        count: f ? f.count : 0,
+      };
+    });
+
+    const folderFilter = dataRaw.filter(i =>
+      i.title.toLowerCase().includes(filter.toLowerCase()),
     );
+    setData(folderFilter);
   };
 
   useEffect(() => {
-    getData();
-  }, []);
+    getData(filterValue);
+  }, [filterValue]);
+
   return (
     <Fragment>
       <TemplateModal
@@ -298,14 +303,19 @@ export default function Folder() {
             setShowModal(false);
           }}
           onReset={() => {
-            getData();
+            getData('');
           }}
         />
       </TemplateModal>
       <View style={styles.container}>
         <View style={isDarkMode ? styles.containerMainD : styles.containerMain}>
           <Typography variant="title">Carpetas</Typography>
-          <SearchInput placeholder="Buscar carpeta " />
+          <SearchInput
+            placeholder="Buscar carpeta "
+            onChange={txt => {
+              setFilterValue(txt);
+            }}
+          />
           <View style={styles.container}>
             <FlatList
               data={data}

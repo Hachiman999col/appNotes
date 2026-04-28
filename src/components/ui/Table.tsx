@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   },
   cell: {
     textAlign: 'center',
-    color: colors.cardPurple.dark,
+
     fontSize: 14,
   },
 });
