@@ -6,6 +6,7 @@ import { getAllFolders, getAllNotes } from '../core/db/dbGet';
 import { deleteAllFolders, deleteAllNotes } from '../core/db/dbDelete';
 import { RouterContext } from '../context/routerContext';
 import { TypographyBasic } from '../components/ui/Typography';
+import { palette, tokens } from '../styles/theme';
 
 const calculateSizeInKb = (data: any[]): number => {
   const jsonString = JSON.stringify(data);
@@ -17,12 +18,10 @@ const calculateSizeInKb = (data: any[]): number => {
 export default function Config() {
   const { navigate } = useContext(RouterContext);
 
-  //states
   const [dataTable, setDataTable] = useState<DataType[]>([]);
 
   const handleGetData = useCallback(async () => {
     const notesDb = await getAllNotes();
-
     const foldersDb = await getAllFolders();
 
     setDataTable([
@@ -49,7 +48,6 @@ export default function Config() {
 
   useEffect(() => {
     handleGetData();
-
     return () => {};
   }, [handleGetData]);
 
@@ -103,48 +101,28 @@ export default function Config() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: palette.bg.base,
   },
   containerMain: {
     flex: 1,
-    paddingHorizontal: 8,
+    paddingHorizontal: tokens.spacing.sm,
   },
   title: {
-    fontWeight: '600',
-    fontSize: 26,
+    fontWeight: tokens.typography.weight.semibold,
+    fontSize: tokens.typography.size.xl,
     width: '100%',
     textAlign: 'left',
-    paddingHorizontal: 8,
-    marginBottom: 8,
+    paddingHorizontal: tokens.spacing.sm,
+    marginBottom: tokens.spacing.sm,
+    color: palette.text.primary,
   },
   subTitle: {
-    fontWeight: '500',
-    fontSize: 18,
+    fontWeight: tokens.typography.weight.medium,
+    fontSize: tokens.typography.size.md,
     width: '100%',
     textAlign: 'left',
-    paddingHorizontal: 8,
-    marginBottom: 8,
-  },
-  containerInput: {
-    paddingVertical: 20,
-    backgroundColor: '#f8f9fa',
-  },
-  searchSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f1f3f6', // Color de fondo grisáceo suave del input
-    borderRadius: 50, // Hace que sea totalmente ovalado
-    paddingHorizontal: 15,
-    height: 55, // Altura del input
-  },
-  searchIcon: {
-    fontSize: 18,
-    marginRight: 10,
-    opacity: 0.5, // Para que no se vea tan fuerte el emoji
-  },
-  input: {
-    flex: 1,
-    fontSize: 18,
-    color: '#495057', // Color del texto al escribir
-    height: '100%',
+    paddingHorizontal: tokens.spacing.sm,
+    marginBottom: tokens.spacing.sm,
+    color: palette.text.secondary,
   },
 });

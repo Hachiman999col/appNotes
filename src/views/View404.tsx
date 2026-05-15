@@ -1,18 +1,17 @@
 import { Text, StyleSheet } from 'react-native';
 import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import { colors } from '../styles/color';
+import { palette, tokens } from '../styles/theme';
 
 export default function View404() {
   return (
     <LinearGradient
       colors={[
-        colors.white,
-        colors.orange,
-        colors.orangeDark,
-        colors.orangeDark,
-        colors.orange,
-        colors.white,
+        palette.bg.base,
+        palette.accent.subtle,
+        palette.bg.elevated,
+        palette.accent.subtle,
+        palette.bg.base,
       ]}
       style={styles.container}
     >
@@ -28,11 +27,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontWeight: '700',
-    fontSize: 46,
-    color: colors.white,
+    fontWeight: tokens.typography.weight.bold,
+    fontSize: tokens.typography.size['2xl'],
+    color: palette.accent.DEFAULT,
+    fontFamily: tokens.typography.family.mono,
   },
   info: {
-    color: colors.white,
+    color: palette.text.secondary,
+    marginTop: tokens.spacing.sm,
+    fontSize: tokens.typography.size.md,
   },
 });

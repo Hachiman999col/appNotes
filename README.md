@@ -1,6 +1,7 @@
 # appNotes
 
 A React Native application for taking and managing notes.
+![Demostración de la App](example.gif)
 
 ## Prerequisites
 
@@ -12,11 +13,13 @@ A React Native application for taking and managing notes.
 ## Installation
 
 1. Install dependencies:
+
 ```sh
 npm install
 ```
 
 2. For iOS (macOS only):
+
 ```sh
 bundle install
 bundle exec pod install
@@ -27,16 +30,19 @@ bundle exec pod install
 ### Development
 
 Start Metro bundler:
+
 ```sh
 npm start
 ```
 
 Run on Android:
+
 ```sh
 npm run android
 ```
 
 Run on iOS:
+
 ```sh
 npm run ios
 ```

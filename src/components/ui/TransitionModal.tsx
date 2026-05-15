@@ -3,58 +3,35 @@ import {
   Modal,
   StyleSheet,
   useWindowDimensions,
-  useColorScheme,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import AnimatedGradientTransition from './AnimatedGradient';
-import { colors } from '../../styles/color';
+import { palette } from '../../styles/theme';
 import IconsSvg from '../iconsSvg';
 
 const colorsAnimation = [
-  [colors.cardPurple.light, colors.cardPurple.main],
-  [colors.cardBlue.light, colors.cardBlue.main],
-  [colors.cardGreen.light, colors.cardGreen.main],
-  [colors.cardYellow.light, colors.cardYellow.main],
-  [colors.cardOrange.light, colors.cardOrange.main],
-  [colors.cardYellow.light, colors.cardYellow.main],
-  [colors.cardGreen.light, colors.cardGreen.main],
-  [colors.cardBlue.light, colors.cardBlue.main],
-];
-const colorsAnimationD = [
-  [colors.cardPurple.main, colors.cardPurple.dark],
-  [colors.cardBlue.main, colors.cardBlue.dark],
-  [colors.cardGreen.main, colors.cardGreen.dark],
-  [colors.cardYellow.main, colors.cardYellow.dark],
-  [colors.cardOrange.main, colors.cardOrange.dark],
-  [colors.cardYellow.main, colors.cardYellow.dark],
-  [colors.cardGreen.main, colors.cardGreen.dark],
-  [colors.cardBlue.main, colors.cardBlue.dark],
-];
-const logoColor = [
-  colors.cardPurple.dark,
-  colors.cardBlue.dark,
-  colors.cardGreen.dark,
-  colors.cardYellow.dark,
-  colors.cardOrange.dark,
-  colors.cardYellow.dark,
-  colors.cardGreen.dark,
-  colors.cardBlue.dark,
+  [palette.card.purple.dark, palette.card.purple.main],
+  [palette.card.blue.dark, palette.card.blue.main],
+  [palette.card.green.dark, palette.card.green.main],
+  [palette.card.yellow.dark, palette.card.yellow.main],
+  [palette.card.orange.dark, palette.card.orange.main],
+  [palette.card.yellow.dark, palette.card.yellow.main],
+  [palette.card.green.dark, palette.card.green.main],
+  [palette.card.blue.dark, palette.card.blue.main],
 ];
 
-const logoColorD = [
-  colors.cardPurple.light,
-  colors.cardBlue.light,
-  colors.cardGreen.light,
-  colors.cardYellow.light,
-  colors.cardOrange.light,
-  colors.cardYellow.light,
-  colors.cardGreen.light,
-  colors.cardBlue.light,
+const logoColor = [
+  palette.card.purple.main,
+  palette.card.blue.main,
+  palette.card.green.main,
+  palette.card.yellow.main,
+  palette.card.orange.main,
+  palette.card.yellow.main,
+  palette.card.green.main,
+  palette.card.blue.main,
 ];
 
 export default function TransitionModal({ open = false }: { open?: boolean }) {
-  const isDarkMode = useColorScheme() === 'dark';
-
   const [colorIndex, setColorIndex] = useState<number>(0);
 
   const { width, height } = useWindowDimensions();
@@ -64,7 +41,6 @@ export default function TransitionModal({ open = false }: { open?: boolean }) {
         if (prevCounter + 1 > 7) {
           return 0;
         }
-
         return prevCounter + 1;
       });
     }, 500);
@@ -84,20 +60,14 @@ export default function TransitionModal({ open = false }: { open?: boolean }) {
           styles.centeredView,
           {
             height: height,
-
             width: width,
           },
         ]}
       >
         <AnimatedGradientTransition
-          colors={
-            isDarkMode
-              ? colorsAnimationD[colorIndex]
-              : colorsAnimation[colorIndex]
-          }
+          colors={colorsAnimation[colorIndex]}
           style={{
             height: height,
-
             width: width,
           }}
         />
@@ -105,7 +75,7 @@ export default function TransitionModal({ open = false }: { open?: boolean }) {
           <IconsSvg
             name="note"
             size={width * 0.3}
-            fill={isDarkMode ? logoColorD[colorIndex] : logoColor[colorIndex]}
+            fill={logoColor[colorIndex]}
           />
         </View>
       </View>
@@ -118,7 +88,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-
     position: 'relative',
   },
 

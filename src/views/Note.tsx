@@ -4,10 +4,9 @@ import {
   Pressable,
   TextInput,
   useWindowDimensions,
-  useColorScheme,
 } from 'react-native';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { colors } from '../styles/color';
+import { palette, tokens } from '../styles/theme';
 import IconsSvg from '../components/iconsSvg';
 import { RouterContext } from '../context/routerContext';
 import BasicButtons from '../components/ui/Buttons';
@@ -26,7 +25,6 @@ export default function Note() {
   const isActive = useKeyBoardStatus();
   const { goBack } = useContext(RouterContext);
   const { folder, idNote, setIdNoteDb } = useContext(GeneralContext);
-  const isDarkMode = useColorScheme() === 'dark';
   const [title, setTitle] = useState<string>('');
   const [content, setContect] = useState<string>('');
 
@@ -91,7 +89,7 @@ export default function Note() {
             <IconsSvg
               name="arrowleft"
               strokeWidth={2}
-              stroke={isDarkMode ? colors.white : colors.dark}
+              stroke={palette.text.primary}
             />
             <TypographyBasic>Volver</TypographyBasic>
           </Pressable>
@@ -110,11 +108,7 @@ export default function Note() {
             <TypographyBasic
               style={[
                 styles.titleModalTxt,
-                {
-                  color: isDarkMode
-                    ? colors.cardPurple.light
-                    : colors.cardPurple.dark,
-                },
+                { color: palette.accent.DEFAULT },
               ]}
             >
               Nueva nota
@@ -125,10 +119,10 @@ export default function Note() {
           <TextInput
             style={[
               styles.inputTitle,
-              { color: isDarkMode ? colors.white : '#696b6e' },
+              { color: palette.text.primary },
             ]}
             placeholder="Titulo"
-            placeholderTextColor="#8e9aaf"
+            placeholderTextColor={palette.text.muted}
             value={title}
             onChangeText={setTitle}
           />
@@ -144,14 +138,13 @@ export default function Note() {
               styles.inputNote,
               {
                 height: height - 250 - (isActive ? 300 : 0),
-
-                color: isDarkMode ? colors.white : '#696b6e',
+                color: palette.text.secondary,
               },
             ]}
             value={content}
             onChangeText={setContect}
             placeholder="Escribir nota..."
-            placeholderTextColor="#8e9aaf"
+            placeholderTextColor={palette.text.muted}
             multiline={true}
             numberOfLines={6}
             textAlignVertical="top"
@@ -175,10 +168,11 @@ export default function Note() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: palette.bg.base,
   },
   containerMain: {
     flex: 1,
-    paddingHorizontal: 8,
+    paddingHorizontal: tokens.spacing.sm,
   },
   titleContainer: {
     flexDirection: 'row',
@@ -189,27 +183,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
-    color: colors.cardPurple.dark,
+    gap: tokens.spacing.sm,
   },
   titleModalTxt: {
     paddingTop: 10,
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.md,
+    fontWeight: tokens.typography.weight.semibold,
   },
 
   contentTitle: {
-    marginBottom: 16,
+    marginBottom: tokens.spacing.md,
   },
   contentNote: {
     flex: 1,
   },
   inputTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.xl,
+    fontWeight: tokens.typography.weight.semibold,
   },
   inputNote: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.md,
+    fontWeight: tokens.typography.weight.medium,
   },
 });

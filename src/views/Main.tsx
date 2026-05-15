@@ -8,6 +8,7 @@ import { RouterContext } from '../context/routerContext';
 import { getNotesWithFolderInfo } from '../core/db/dbGet';
 import { Note } from '../core/db/types';
 import Typography from '../components/ui/Typography';
+import { palette, tokens } from '../styles/theme';
 
 export default function Main() {
   const { navigate } = useContext(RouterContext);
@@ -52,10 +53,11 @@ export default function Main() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: palette.bg.base,
   },
   containerMain: {
     flex: 1,
-    paddingHorizontal: 8,
+    paddingHorizontal: tokens.spacing.sm,
   },
   titleContainer: {
     flexDirection: 'row',

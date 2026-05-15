@@ -1,5 +1,6 @@
-import { StyleSheet, TextInput, useColorScheme, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import IconsSvg from '../iconsSvg';
+import { palette, tokens } from '../../styles/theme';
 
 interface Props {
   placeholder?: string;
@@ -8,20 +9,12 @@ interface Props {
 }
 export default function SearchInput(props: Props) {
   const { placeholder = 'Buscar toda...', value, onChange } = props;
-  const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.containerInput}>
-      <View
-        style={[
-          styles.searchSection,
-          isDarkMode ? styles.searchSectionDark : styles.searchSectionLight,
-        ]}
-      >
-        {/* Icono de lupa usando Unicode */}
-
+      <View style={styles.searchSection}>
         <IconsSvg
           name="search"
-          fill="#696b6e"
+          fill={palette.text.muted}
           strokeWidth={4}
           style={styles.searchIcon}
         />
@@ -29,7 +22,7 @@ export default function SearchInput(props: Props) {
           value={value}
           style={styles.input}
           placeholder={placeholder}
-          placeholderTextColor="#8e9aaf"
+          placeholderTextColor={palette.text.muted}
           underlineColorAndroid="transparent"
           onChangeText={(txt: string) => {
             if (onChange) onChange(txt);
@@ -41,33 +34,27 @@ export default function SearchInput(props: Props) {
 }
 const styles = StyleSheet.create({
   containerInput: {
-    paddingVertical: 20,
+    paddingVertical: tokens.spacing.md,
   },
   searchSection: {
     flexDirection: 'row',
     alignItems: 'center',
-
-    borderRadius: 50,
-    paddingHorizontal: 15,
+    backgroundColor: palette.bg.surface,
+    borderRadius: tokens.radius.full,
+    borderWidth: 1,
+    borderColor: palette.border.DEFAULT,
+    paddingHorizontal: tokens.spacing.md,
     height: 55,
-  },
-  searchSectionDark: {
-    borderColor: '#f1f3f6',
-    borderWidth: 2,
-    borderRadius: 50,
-  },
-  searchSectionLight: {
-    backgroundColor: '#f1f3f6',
   },
   searchIcon: {
     fontSize: 18,
     marginRight: 10,
-    opacity: 0.5,
+    opacity: 0.7,
   },
   input: {
     flex: 1,
-    fontSize: 18,
-    color: '#495057',
+    fontSize: tokens.typography.size.md,
+    color: palette.text.primary,
     height: '100%',
   },
 });

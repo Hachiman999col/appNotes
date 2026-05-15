@@ -4,18 +4,15 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  useColorScheme,
 } from 'react-native';
-import React, { useContext, useMemo } from 'react';
+import React, { useContext } from 'react';
 import IconsSvg from '../../iconsSvg';
 import { RouterContext } from '../../../context/routerContext';
-import { colors } from '../../../styles/color';
+import { palette, tokens } from '../../../styles/theme';
 import { GeneralContext } from '../../../context/generalContext';
 
 const width = Dimensions.get('window').width;
 export default function MenuFooter() {
-  const isDarkMode = useColorScheme() === 'dark';
-
   const { routeName, navigate } = useContext(RouterContext);
   const { setFolderName } = useContext(GeneralContext);
   const goPath = (name: string) => {
@@ -23,13 +20,9 @@ export default function MenuFooter() {
     navigate(name);
   };
 
-  const defColor = useMemo(() => {
-    return isDarkMode ? '#bec4ca' : '#495057';
-  }, [isDarkMode]);
+  const inactiveColor = palette.text.muted;
+  const activeColor = palette.accent.DEFAULT;
 
-  const defColorText = useMemo(() => {
-    return isDarkMode ? styles.menuTextD : styles.menuText;
-  }, [isDarkMode]);
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -41,12 +34,12 @@ export default function MenuFooter() {
         <IconsSvg
           name="home"
           strokeWidth={2}
-          fill={routeName.includes('home') ? colors.orangeDark : 'none'}
-          stroke={routeName.includes('home') ? colors.orangeDark : defColor}
+          fill={routeName.includes('home') ? activeColor : 'none'}
+          stroke={routeName.includes('home') ? activeColor : inactiveColor}
         />
         <Text
           style={[
-            defColorText,
+            styles.menuText,
             routeName.includes('home') && styles.menuTextActive,
           ]}
         >
@@ -63,12 +56,12 @@ export default function MenuFooter() {
         <IconsSvg
           name="folder"
           strokeWidth={2}
-          fill={routeName.includes('folder') ? colors.orangeDark : 'none'}
-          stroke={routeName.includes('folder') ? colors.orangeDark : defColor}
+          fill={routeName.includes('folder') ? activeColor : 'none'}
+          stroke={routeName.includes('folder') ? activeColor : inactiveColor}
         />
         <Text
           style={[
-            defColorText,
+            styles.menuText,
             routeName.includes('folder') && styles.menuTextActive,
           ]}
         >
@@ -85,12 +78,12 @@ export default function MenuFooter() {
         <IconsSvg
           name="gear"
           strokeWidth={2}
-          fill={routeName.includes('config') ? colors.orangeDark : 'none'}
-          stroke={routeName.includes('config') ? colors.orangeDark : defColor}
+          fill={routeName.includes('config') ? activeColor : 'none'}
+          stroke={routeName.includes('config') ? activeColor : inactiveColor}
         />
         <Text
           style={[
-            defColorText,
+            styles.menuText,
             routeName.includes('config') && styles.menuTextActive,
           ]}
         >
@@ -106,24 +99,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: width * 0.13,
-    paddingVertical: 8,
+    paddingVertical: tokens.spacing.sm,
+    backgroundColor: palette.bg.elevated,
+    borderTopWidth: 1,
+    borderTopColor: palette.border.DEFAULT,
   },
 
   iconMenu: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 4,
-    borderRadius: 13,
+    padding: tokens.spacing.sm,
+    borderRadius: tokens.radius.md,
   },
   menuText: {
-    color: '#495057',
-  },
-
-  menuTextD: {
-    color: '#bec4ca',
+    color: palette.text.muted,
+    fontSize: tokens.typography.size.xs,
+    marginTop: tokens.spacing.xs,
+    fontWeight: tokens.typography.weight.medium,
   },
   menuTextActive: {
-    color: colors.orangeDark,
+    color: palette.accent.DEFAULT,
   },
 });

@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, TextProps, Text, useColorScheme } from 'react-native';
+import { StyleSheet, TextProps, Text } from 'react-native';
+import { palette, tokens } from '../../styles/theme';
 
 interface Props extends TextProps {
   variant?: 'title' | 'subTitle';
@@ -7,11 +8,9 @@ interface Props extends TextProps {
 export function TypographyBasic(props: TextProps) {
   const { style, children, ...argProps } = props;
 
-  const isDarkMode = useColorScheme() === 'dark';
-
   return (
     <Text
-      style={[isDarkMode ? styles.d : styles.w, style].filter(Boolean)}
+      style={[styles.textPrimary, style].filter(Boolean)}
       {...argProps}
     >
       {children || ''}
@@ -22,7 +21,6 @@ export function TypographyBasic(props: TextProps) {
 export default function Typography(props: Props) {
   const { variant, style, children, ...argProps } = props;
 
-  const isDarkMode = useColorScheme() === 'dark';
   const baseStyle = useMemo(() => {
     switch (variant) {
       case 'title':
@@ -36,9 +34,7 @@ export default function Typography(props: Props) {
 
   return (
     <Text
-      style={[baseStyle, isDarkMode ? styles.d : styles.w, style].filter(
-        Boolean,
-      )}
+      style={[baseStyle, styles.textPrimary, style].filter(Boolean)}
       {...argProps}
     >
       {String(children)}
@@ -47,36 +43,33 @@ export default function Typography(props: Props) {
 }
 
 const styles = StyleSheet.create({
-  w: {
-    color: '#2e2e2e',
-  },
-  d: {
-    color: '#f0f0f0',
+  textPrimary: {
+    color: palette.text.primary,
   },
 
   title: {
-    fontWeight: '600',
-    fontSize: 26,
-
+    fontFamily: tokens.typography.family.sans,
+    fontWeight: tokens.typography.weight.semibold,
+    fontSize: tokens.typography.size.xl,
     textAlign: 'left',
-    paddingHorizontal: 8,
-    marginBottom: 8,
+    paddingHorizontal: tokens.spacing.sm,
+    marginBottom: tokens.spacing.sm,
   },
   subTitle: {
-    fontWeight: '500',
-    fontSize: 20,
-
+    fontFamily: tokens.typography.family.sans,
+    fontWeight: tokens.typography.weight.medium,
+    fontSize: tokens.typography.size.lg,
     textAlign: 'left',
-    paddingHorizontal: 8,
-    marginBottom: 8,
+    paddingHorizontal: tokens.spacing.sm,
+    marginBottom: tokens.spacing.sm,
   },
 
   def: {
-    fontWeight: '400',
-    fontSize: 16,
-
+    fontFamily: tokens.typography.family.sans,
+    fontWeight: tokens.typography.weight.normal,
+    fontSize: tokens.typography.size.md,
     textAlign: 'left',
-    paddingHorizontal: 8,
-    marginBottom: 8,
+    paddingHorizontal: tokens.spacing.sm,
+    marginBottom: tokens.spacing.sm,
   },
 });

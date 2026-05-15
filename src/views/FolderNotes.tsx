@@ -1,11 +1,11 @@
-import { View, StyleSheet, Pressable, useColorScheme } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import BoardNotes from '../components/sections/BoardNotes';
 import SearchInput from '../components/Form/SearchInput';
 import BasicButtons from '../components/ui/Buttons';
 import { RouterContext } from '../context/routerContext';
-import { colors } from '../styles/color';
+import { palette, tokens } from '../styles/theme';
 import IconsSvg from '../components/iconsSvg';
 import { GeneralContext } from '../context/generalContext';
 import { getFolderByTitle, getNotesByFolder } from '../core/db/dbGet';
@@ -15,7 +15,6 @@ import { TypographyBasic } from '../components/ui/Typography';
 
 export default function FolderNotes() {
   const { navigate } = useContext(RouterContext);
-  const isDarkMode = useColorScheme() === 'dark';
   const { folder } = useContext(GeneralContext);
 
   const [data, setData] = useState<Note[]>([]);
@@ -48,11 +47,10 @@ export default function FolderNotes() {
 
     navigate('folderMain');
   }, [folder, data, navigate]);
+
   useEffect(() => {
     if (!folder) return;
-
     handleGetData(folder);
-
     return () => {};
   }, [folder, handleGetData]);
 
@@ -69,7 +67,7 @@ export default function FolderNotes() {
             <IconsSvg
               name="arrowleft"
               strokeWidth={2}
-              stroke={isDarkMode ? colors.white : colors.dark}
+              stroke={palette.text.primary}
             />
             <TypographyBasic>Volver</TypographyBasic>
           </Pressable>
@@ -110,10 +108,11 @@ export default function FolderNotes() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: palette.bg.base,
   },
   containerMain: {
     flex: 1,
-    paddingHorizontal: 8,
+    paddingHorizontal: tokens.spacing.sm,
   },
   titleContainer: {
     flexDirection: 'row',
@@ -122,18 +121,17 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontWeight: '600',
-    fontSize: 26,
-
+    fontWeight: tokens.typography.weight.semibold,
+    fontSize: tokens.typography.size.xl,
     textAlign: 'left',
-    paddingHorizontal: 8,
-    marginBottom: 8,
+    paddingHorizontal: tokens.spacing.sm,
+    marginBottom: tokens.spacing.sm,
+    color: palette.text.primary,
   },
   titleModalGoBack: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
-    color: colors.cardPurple.dark,
+    gap: tokens.spacing.sm,
   },
 });

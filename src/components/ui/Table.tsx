@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import React from 'react';
-import { colors } from '../../styles/color';
+import { palette, tokens } from '../../styles/theme';
 import { TypographyBasic } from './Typography';
 
 export type DataType = {
@@ -67,30 +67,31 @@ export default function Table({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 15,
+    padding: tokens.spacing.md,
   },
   header: {
     flexDirection: 'row',
-    backgroundColor: colors.cardPurple.dark,
-    borderBottomWidth: 2,
-    borderBottomColor: colors.cardPurple.light,
-    paddingVertical: 10,
-    borderRadius: 8,
+    backgroundColor: palette.bg.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: palette.border.light,
+    paddingVertical: tokens.spacing.sm + 2,
+    borderRadius: tokens.radius.md,
   },
   row: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    paddingVertical: 12,
+    borderBottomColor: palette.border.DEFAULT,
+    paddingVertical: tokens.spacing.sm + 4,
   },
   columnHeader: {
-    fontWeight: 'bold',
-    color: colors.white,
+    fontWeight: tokens.typography.weight.bold,
+    color: palette.accent.DEFAULT,
     textAlign: 'center',
+    fontSize: tokens.typography.size.sm,
   },
   cell: {
     textAlign: 'center',
-
-    fontSize: 14,
+    fontSize: tokens.typography.size.sm,
+    color: palette.text.secondary,
   },
 });

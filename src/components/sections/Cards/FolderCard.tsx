@@ -3,12 +3,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   useWindowDimensions,
-  useColorScheme,
 } from 'react-native';
 import React, { useMemo } from 'react';
 import IconsSvg from '../../iconsSvg';
-import { objColor } from '../../../styles/color';
+import { objColor } from '../../../styles/theme';
 import Typography, { TypographyBasic } from '../../ui/Typography';
+import { palette, tokens } from '../../../styles/theme';
 
 interface Props {
   title: string;
@@ -20,7 +20,6 @@ interface Props {
 
 export default function FolderCard(props: Props) {
   const { title, iconName, colorName, onPress, count } = props;
-  const isDarkMode = useColorScheme() === 'dark';
   const { width } = useWindowDimensions();
 
   const colorData = useMemo(() => {
@@ -32,19 +31,25 @@ export default function FolderCard(props: Props) {
   }, [colorName]);
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity
+      style={[
+        styles.container,
+        { backgroundColor: palette.bg.surface, borderLeftColor: colorData.main },
+      ]}
+      onPress={onPress}
+    >
       <View style={[styles.containerTitle, { width: width - 100 }]}>
         <View
           style={[
             styles.containerIcon,
             {
-              backgroundColor: colorData[isDarkMode ? 'dark' : 'main'],
+              backgroundColor: colorData.dark,
             },
           ]}
         >
           <IconsSvg
             name={iconName}
-            stroke={colorData[isDarkMode ? 'light' : 'dark']}
+            stroke={colorData.main}
           />
         </View>
         <Typography variant="subTitle" style={styles.title}>
@@ -64,27 +69,33 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 26,
+    paddingHorizontal: tokens.spacing.md,
+    paddingVertical: tokens.spacing.md,
+    marginBottom: tokens.spacing.md,
+    backgroundColor: palette.bg.surface,
+    borderRadius: tokens.radius.md,
+    borderLeftWidth: 4,
+    borderLeftColor: palette.accent.DEFAULT,
   },
 
   containerTitle: {
     flexDirection: 'row',
-    gap: 8,
+    gap: tokens.spacing.sm,
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
   containerIcon: {
-    padding: 4,
-    borderRadius: 6,
+    padding: tokens.spacing.sm,
+    borderRadius: tokens.radius.sm,
     justifyContent: 'center',
     alignItems: 'center',
   },
   title: {
-    marginTop: 4,
+    marginTop: tokens.spacing.xs,
   },
   countTxt: {
-    fontSize: 16,
-    opacity: 0.6,
+    fontSize: tokens.typography.size.md,
+    color: palette.text.muted,
+    fontWeight: tokens.typography.weight.semibold,
   },
 });

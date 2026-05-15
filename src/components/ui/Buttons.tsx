@@ -6,15 +6,14 @@ import {
   Animated,
   PanResponder,
   useWindowDimensions,
-  useColorScheme,
 } from 'react-native';
 import React, { useMemo, useRef } from 'react';
-import { colors } from '../../styles/color';
+import { palette, tokens } from '../../styles/theme';
 import IconsSvg from '../iconsSvg';
 
 interface BasicProps extends PressableProps {
   children: string;
-  variant?: 'default' | 'warnning' | 'error';
+  variant?: 'default' | 'warning' | 'error';
   icon?: string;
 }
 const FAB_SIZE = 60;
@@ -28,32 +27,19 @@ export function DraggableFAB() {
       onStartShouldSetPanResponder: () => true,
 
       onPanResponderMove: (event, gestureState) => {
-        // Calculamos la nueva posición sumando el movimiento (dx, dy) al punto inicial
         let newX = gestureState.dx;
         let newY = gestureState.dy;
 
-        // --- LÓGICA DE RESTRICCIÓN (Clamping) ---
-
-        // Límites horizontales (X)
-        // No permitir que X sea menor a lo que lo saque por la izquierda
-        // ni mayor a lo que lo saque por la derecha
-        const minX = -(width - FAB_SIZE - 20); // 20 es un margen opcional
+        const minX = -(width - FAB_SIZE - 20);
         const maxX = 30;
-
-        // Límites verticales (Y)
         const minY = -(height - FAB_SIZE - 50);
         const maxY = 30;
 
-        // Aplicamos la restricción manual
         if (newX < minX) newX = minX;
         if (newX > maxX) newX = maxX;
         if (newY < minY) newY = minY;
         if (newY > maxY) newY = maxY;
 
-        console.log('width', width, newX);
-
-        console.log('height', height, newY);
-        // Seteamos el valor manualmente en lugar de usar Animated.event
         pan.x.setValue(newX);
         pan.y.setValue(newY);
       },
@@ -74,53 +60,46 @@ export function DraggableFAB() {
       ]}
       {...panResponder.panHandlers}
     >
-      <Text style={styles.text}>+</Text>
+      <Text style={styles.fabText}>+</Text>
     </Animated.View>
   );
 }
 
 export default function BasicButtons(props: BasicProps) {
   const { variant = 'default', children, icon, style, ...argProps } = props;
-  const isDarkMode = useColorScheme() === 'dark';
 
-  const bgColor = useMemo(() => {
-    if (variant === 'default') return colors.cardPurple.main;
-    if (variant === 'warnning') return colors.cardYellow.main;
-    if (variant === 'error') return colors.cardRed.main;
-    return colors.cardPurple.main;
+  const theme = useMemo(() => {
+    switch (variant) {
+      case 'error':
+        return {
+          bg: palette.error.DEFAULT,
+          text: palette.text.primary,
+        };
+      case 'warning':
+        return {
+          bg: palette.warning.DEFAULT,
+          text: palette.text.inverse,
+        };
+      default:
+        return {
+          bg: palette.accent.DEFAULT,
+          text: palette.text.primary,
+        };
+    }
   }, [variant]);
 
-  const bgColorD = useMemo(() => {
-    if (variant === 'default') return colors.cardPurple.dark;
-    if (variant === 'warnning') return colors.cardYellow.dark;
-    if (variant === 'error') return colors.cardRed.dark;
-    return colors.cardPurple.dark;
-  }, [variant]);
-  const txtColor = useMemo(() => {
-    if (variant === 'default') return colors.cardPurple.dark;
-    if (variant === 'warnning') return colors.cardYellow.dark;
-    if (variant === 'error') return colors.cardRed.dark;
-    return colors.cardPurple.dark;
-  }, [variant]);
-
-  const txtColorD = useMemo(() => {
-    if (variant === 'default') return colors.cardPurple.light;
-    if (variant === 'warnning') return colors.cardYellow.light;
-    if (variant === 'error') return colors.cardRed.light;
-    return colors.cardPurple.light;
-  }, [variant]);
   return (
     <Pressable
       style={
         typeof style === 'function'
           ? state => [
               styles.btn,
-              { backgroundColor: isDarkMode ? bgColorD : bgColor },
+              { backgroundColor: theme.bg },
               style(state),
             ]
           : [
               styles.btn,
-              { backgroundColor: isDarkMode ? bgColorD : bgColor },
+              { backgroundColor: theme.bg },
               style,
             ]
       }
@@ -129,15 +108,13 @@ export default function BasicButtons(props: BasicProps) {
       {icon && (
         <IconsSvg
           name="folderPlus"
-          stroke={isDarkMode ? txtColorD : txtColor}
+          stroke={theme.text}
         />
       )}
       <Text
         style={[
           styles.text,
-          {
-            color: isDarkMode ? txtColorD : txtColor,
-          },
+          { color: theme.text },
         ]}
       >
         {children}
@@ -148,34 +125,39 @@ export default function BasicButtons(props: BasicProps) {
 export const styles = StyleSheet.create({
   btn: {
     flexDirection: 'row',
-    gap: 4,
-    marginHorizontal: 16,
-    marginVertical: 8,
-    backgroundColor: colors.cardPurple.main,
+    gap: tokens.spacing.sm,
+    marginHorizontal: tokens.spacing.md,
+    marginVertical: tokens.spacing.sm,
+    backgroundColor: palette.accent.DEFAULT,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 8,
-    borderRadius: 10,
+    padding: tokens.spacing.sm + 2,
+    borderRadius: tokens.radius.md,
   },
 
   fab: {
     position: 'absolute',
     bottom: 50,
     right: 30,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-
+    width: FAB_SIZE,
+    height: FAB_SIZE,
+    borderRadius: tokens.radius.full,
+    backgroundColor: palette.accent.DEFAULT,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+  },
+  fabText: {
+    fontSize: tokens.typography.size.lg,
+    fontWeight: tokens.typography.weight.bold,
+    color: palette.text.primary,
   },
   text: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: tokens.typography.size.md,
+    fontWeight: tokens.typography.weight.semibold,
   },
 });

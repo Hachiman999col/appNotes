@@ -10,7 +10,7 @@ import React, { useCallback, useContext, useEffect } from 'react';
 
 import Svg, { Defs, RadialGradient, Circle, Stop } from 'react-native-svg';
 import IconsSvg from '../components/iconsSvg';
-import { colors } from '../styles/color';
+import { palette, tokens } from '../styles/theme';
 import { RouterContext } from '../context/routerContext';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -21,7 +21,6 @@ export default function Login() {
   const scaleValue = React.useRef(new Animated.Value(0)).current;
 
   const preLoadData = useCallback(async () => {
-    console.log('fin');
     navigate('homeMain');
   }, [navigate]);
 
@@ -38,7 +37,6 @@ export default function Login() {
     }, 1500);
   }, [scaleValue, preLoadData]);
 
-  // Interpolar el valor de escala para el radio del círculo
   const animatedRadius = scaleValue.interpolate({
     inputRange: [0, 1],
     outputRange: [0, 40],
@@ -57,7 +55,6 @@ export default function Login() {
       >
         <Svg height="100%" width="100%" viewBox="0 0 100 100">
           <Defs>
-            {/* Paso 1: Definir el Degradado Radial */}
             <RadialGradient
               id="grad"
               cx="50%"
@@ -68,9 +65,8 @@ export default function Login() {
               fy="50%"
               gradientUnits="userSpaceOnUse"
             >
-              <Stop offset="0%" stopColor={colors.orange} stopOpacity="0.9" />
-
-              <Stop offset="100%" stopColor={colors.orange} stopOpacity="1" />
+              <Stop offset="0%" stopColor={palette.accent.DEFAULT} stopOpacity="0.9" />
+              <Stop offset="100%" stopColor={palette.accent.hover} stopOpacity="1" />
             </RadialGradient>
           </Defs>
           <AnimatedCircle
@@ -83,7 +79,7 @@ export default function Login() {
       </View>
 
       <View style={styles.absolutePosition}>
-        <IconsSvg name="note" size={width * 0.3} fill={colors.white} />
+        <IconsSvg name="note" size={width * 0.3} fill={palette.text.primary} />
         <Text style={styles.label}>App de notas</Text>
       </View>
     </View>
@@ -94,6 +90,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: palette.bg.base,
   },
   continueLogo: {
     backgroundColor: 'transparent',
@@ -102,9 +99,11 @@ const styles = StyleSheet.create({
   label: {
     width: '100%',
     textAlign: 'center',
-    fontSize: 26,
-    fontWeight: '600',
-    color: colors.white,
+    fontSize: tokens.typography.size.xl,
+    fontWeight: tokens.typography.weight.semibold,
+    color: palette.text.primary,
+    marginTop: tokens.spacing.md,
+    fontFamily: tokens.typography.family.mono,
   },
   absolutePosition: {
     position: 'absolute',

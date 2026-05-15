@@ -5,11 +5,10 @@ import {
   FlatList,
   useWindowDimensions,
   Pressable,
-  useColorScheme,
 } from 'react-native';
 import React, { Fragment, useContext, useEffect, useState } from 'react';
 import SearchInput from '../components/Form/SearchInput';
-import { colors, objColor } from '../styles/color';
+import { objColor } from '../styles/theme';
 
 import BasicButtons from '../components/ui/Buttons';
 import FolderCard from '../components/sections/Cards/FolderCard';
@@ -23,6 +22,7 @@ import { getAllFolders, getNotesCount } from '../core/db/dbGet';
 import { ResponseApiFolder } from '../core/db/types';
 import { GeneralContext } from '../context/generalContext';
 import Typography, { TypographyBasic } from '../components/ui/Typography';
+import { palette, tokens } from '../styles/theme';
 
 interface FolderType extends ResponseApiFolder {
   count: number;
@@ -37,31 +37,14 @@ const listColors: {
     dark: string;
   };
 }[] = [
-  {
-    name: 'cardRed',
-    colors: colors.cardRed,
-  },
-  {
-    name: 'cardOrange',
-    colors: colors.cardOrange,
-  },
-  {
-    name: 'cardYellow',
-    colors: colors.cardYellow,
-  },
-  {
-    name: 'cardGreen',
-    colors: colors.cardGreen,
-  },
-  {
-    name: 'cardBlue',
-    colors: colors.cardBlue,
-  },
-  {
-    name: 'cardPurple',
-    colors: colors.cardPurple,
-  },
+  { name: 'cardRed', colors: palette.card.red },
+  { name: 'cardOrange', colors: palette.card.orange },
+  { name: 'cardYellow', colors: palette.card.yellow },
+  { name: 'cardGreen', colors: palette.card.green },
+  { name: 'cardBlue', colors: palette.card.blue },
+  { name: 'cardPurple', colors: palette.card.purple },
 ];
+
 function NewFolder({
   onCancel,
   onReset,
@@ -69,9 +52,7 @@ function NewFolder({
   onCancel: () => void;
   onReset: () => void;
 }) {
-  const isDarkMode = useColorScheme() === 'dark';
   const { width, height } = useWindowDimensions();
-  //states
   const [iconSelect, setIconSelect] = useState<string>('');
   const [colorSelect, setColorSelect] = useState<string>('');
   const [valueTitle, setValueTitle] = useState<string>('');
@@ -101,18 +82,16 @@ function NewFolder({
   const handleEndEdit = async (txt: string) => {
     const folders = await getAllFolders();
     const names = folders.map(i => i.title.trim());
-
     const exit = names.includes(txt);
-
     setExistFolder(exit);
   };
+
   return (
     <View
       style={[
-        isDarkMode ? styles.containerMainD : styles.containerMain,
+        styles.containerMain,
         {
           height: height,
-
           width: width,
         },
       ]}
@@ -127,7 +106,7 @@ function NewFolder({
           <IconsSvg
             name="arrowleft"
             strokeWidth={2}
-            stroke={isDarkMode ? colors.white : colors.dark}
+            stroke={palette.text.primary}
           />
           <TypographyBasic>Volver</TypographyBasic>
         </Pressable>
@@ -143,7 +122,6 @@ function NewFolder({
           onChangeText={setValueTitle}
           onEndEditing={e => {
             const txt = e.nativeEvent.text;
-
             handleEndEdit(String(txt));
           }}
           error={existFolder}
@@ -172,7 +150,7 @@ function NewFolder({
                   name={item}
                   strokeWidth={2}
                   stroke={
-                    item === iconSelect ? colors.white : colors.cardPurple.dark
+                    item === iconSelect ? palette.text.primary : palette.text.muted
                   }
                 />
               </Pressable>
@@ -221,8 +199,8 @@ function NewFolder({
                       {
                         color:
                           colorSelect === item.name
-                            ? colors.white
-                            : item.colors.dark,
+                            ? palette.text.primary
+                            : item.colors.main,
                       },
                     ]}
                   >
@@ -234,7 +212,7 @@ function NewFolder({
             keyExtractor={item => item.name}
             ListEmptyComponent={
               <View>
-                <Text>Sin Carpetas</Text>
+                <Text style={{ color: palette.text.secondary }}>Sin Carpetas</Text>
               </View>
             }
           />
@@ -244,11 +222,8 @@ function NewFolder({
         <BasicButtons
           onPress={() => {
             if (existFolder) return;
-
             if (!valueTitle) return;
-
             if (!iconSelect) return;
-
             if (!colorSelect) return;
             handleCreateData(valueTitle, iconSelect, colorSelect);
           }}
@@ -261,7 +236,6 @@ function NewFolder({
 }
 
 export default function Folder() {
-  const isDarkMode = useColorScheme() === 'dark';
   const { navigate } = useContext(RouterContext);
   const { setFolderName } = useContext(GeneralContext);
   const [filterValue, setFilterValue] = useState<string>('');
@@ -273,7 +247,6 @@ export default function Folder() {
 
     const dataRaw = folders.map(i => {
       const f = count.find(it => it.folder === i.title);
-
       return {
         ...i,
         count: f ? f.count : 0,
@@ -308,7 +281,7 @@ export default function Folder() {
         />
       </TemplateModal>
       <View style={styles.container}>
-        <View style={isDarkMode ? styles.containerMainD : styles.containerMain}>
+        <View style={styles.containerMain}>
           <Typography variant="title">Carpetas</Typography>
           <SearchInput
             placeholder="Buscar carpeta "
@@ -342,7 +315,7 @@ export default function Folder() {
               keyExtractor={item => String(item.id)}
               ListEmptyComponent={
                 <View>
-                  <Text>Sin Carpetas</Text>
+                  <Text style={{ color: palette.text.secondary }}>Sin Carpetas</Text>
                 </View>
               }
             />
@@ -368,13 +341,8 @@ export const styles = StyleSheet.create({
   },
   containerMain: {
     flex: 1,
-    paddingHorizontal: 8,
-    backgroundColor: colors.white,
-  },
-  containerMainD: {
-    flex: 1,
-    paddingHorizontal: 8,
-    backgroundColor: colors.dark,
+    paddingHorizontal: tokens.spacing.sm,
+    backgroundColor: palette.bg.base,
   },
   title: {
     fontWeight: '600',
@@ -388,65 +356,64 @@ export const styles = StyleSheet.create({
   titleModal: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 8,
+    paddingHorizontal: tokens.spacing.sm,
     borderBottomWidth: 1,
-    paddingBottom: 8,
-    borderBottomColor: colors.cardPurple.light,
+    paddingBottom: tokens.spacing.sm,
+    borderBottomColor: palette.border.DEFAULT,
+    alignItems: 'center',
   },
   titleModalTxt: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.md,
+    fontWeight: tokens.typography.weight.semibold,
+    color: palette.text.primary,
   },
 
   titleModalGoBack: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
-    color: colors.cardPurple.dark,
+    gap: tokens.spacing.sm,
   },
 
-  //
   iconTitle: {
-    marginVertical: 16,
-    fontSize: 22,
-    fontWeight: '600',
+    marginVertical: tokens.spacing.md,
+    fontSize: tokens.typography.size.lg,
+    fontWeight: tokens.typography.weight.semibold,
+    color: palette.text.primary,
   },
   iconContainer: {
-    padding: 6,
-
+    padding: tokens.spacing.sm,
     borderWidth: 1,
-    marginRight: 16,
-    borderRadius: 8,
+    marginRight: tokens.spacing.md,
+    borderRadius: tokens.radius.sm,
   },
   iconDefault: {
-    borderColor: colors.cardPurple.dark,
-    backgroundColor: colors.cardPurple.light,
+    borderColor: palette.border.DEFAULT,
+    backgroundColor: palette.bg.surface,
   },
   iconActive: {
-    borderColor: colors.cardPurple.light,
-    backgroundColor: colors.cardPurple.main,
+    borderColor: palette.accent.DEFAULT,
+    backgroundColor: palette.accent.subtle,
   },
-  //
 
   colorContainer: {
     flex: 1,
-    margin: 8,
-    padding: 8,
+    margin: tokens.spacing.sm,
+    padding: tokens.spacing.sm,
   },
   colorContainerGradient: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: tokens.radius.md,
   },
   colorTxt: {
-    fontSize: 24,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.lg,
+    fontWeight: tokens.typography.weight.semibold,
   },
 
   listContent: {
-    paddingHorizontal: 10,
+    paddingHorizontal: tokens.spacing.sm,
   },
   row: {
     justifyContent: 'space-between',

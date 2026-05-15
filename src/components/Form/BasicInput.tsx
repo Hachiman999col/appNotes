@@ -4,11 +4,10 @@ import {
   TextInput,
   Text,
   TextInputProps,
-  useColorScheme,
 } from 'react-native';
 import React from 'react';
 import IconsSvg from '../iconsSvg';
-import { colors } from '../../styles/color';
+import { palette, tokens } from '../../styles/theme';
 
 interface Props extends TextInputProps {
   iconName?: string;
@@ -18,16 +17,18 @@ interface Props extends TextInputProps {
 
 export default function BasicInput(props: Props) {
   const { iconName, value, onChangeText, error, msjError, ...argProps } = props;
-  const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.containerInput}>
       <View
-        style={isDarkMode ? styles.searchSectionDark : styles.searchSection}
+        style={[
+          styles.searchSection,
+          error && styles.searchSectionError,
+        ]}
       >
         {iconName && (
           <IconsSvg
             name={iconName}
-            stroke={isDarkMode ? colors.white : '#696b6e'}
+            stroke={palette.text.secondary}
             strokeWidth={2}
             style={styles.searchIcon}
           />
@@ -38,9 +39,9 @@ export default function BasicInput(props: Props) {
           onChangeText={onChangeText}
           style={[
             styles.input,
-            { color: isDarkMode ? colors.white : '#495057' },
+            { color: palette.text.primary },
           ]}
-          placeholderTextColor="#8e9aaf"
+          placeholderTextColor={palette.text.muted}
           underlineColorAndroid="transparent"
           {...argProps}
         />
@@ -54,40 +55,35 @@ export default function BasicInput(props: Props) {
 
 const styles = StyleSheet.create({
   containerInput: {
-    paddingVertical: 20,
+    paddingVertical: tokens.spacing.md,
   },
   searchSection: {
     flexDirection: 'row',
     alignItems: 'center',
-
-    paddingHorizontal: 15,
+    backgroundColor: palette.bg.surface,
+    borderRadius: tokens.radius.full,
+    borderWidth: 1,
+    borderColor: palette.border.DEFAULT,
+    paddingHorizontal: tokens.spacing.md,
     height: 55,
   },
-  searchSectionDark: {
-    borderColor: '#f1f3f6',
-    borderWidth: 2,
-    borderRadius: 50,
-
-    flexDirection: 'row',
-    alignItems: 'center',
-
-    paddingHorizontal: 15,
-    height: 55,
+  searchSectionError: {
+    borderColor: palette.error.DEFAULT,
   },
   searchIcon: {
     fontSize: 18,
     marginRight: 10,
-    opacity: 0.5,
+    opacity: 0.7,
   },
   errorMsj: {
-    paddingLeft: 4,
-    marginTop: 6,
-    color: colors.cardRed.dark,
+    paddingLeft: tokens.spacing.sm,
+    marginTop: tokens.spacing.sm,
+    color: palette.error.DEFAULT,
+    fontSize: tokens.typography.size.sm,
   },
   input: {
     flex: 1,
-    fontSize: 18,
-
+    fontSize: tokens.typography.size.md,
     height: '100%',
   },
 });

@@ -1,4 +1,4 @@
-import { StatusBar, useColorScheme } from 'react-native';
+import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RouterContext, RouterProvider } from './src/context/routerContext';
 import {
@@ -23,13 +23,11 @@ import FolderNotes from './src/views/FolderNotes';
 import { GeneralProvider } from './src/context/generalContext';
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
   return (
     <GeneralProvider>
       <RouterProvider defaultRoute="Login">
         <SafeAreaProvider>
-          <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+          <StatusBar barStyle={'light-content'} />
           <AppContent />
         </SafeAreaProvider>
       </RouterProvider>
